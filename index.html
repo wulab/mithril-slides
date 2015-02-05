@@ -7,15 +7,15 @@
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -webkit-user-select: none;
-    /*cursor: none;*/
+    cursor: none;
   }
-  h1, h2, h3 { text-align: center; font-weight: 100; }
+  h1, h2, h3 { text-align: center; font-weight: 100 }
   h1 { font-size: 80pt; margin-bottom: .5em }
   h2 { font-size: 40pt }
   h3 { font-size: 32pt }
-  ul { -webkit-padding-start: 36pt }
+  ul { -webkit-padding-start: 36pt; text-align: left }
   li { margin-bottom: 42pt }
-  pre { font-size: 24pt }
+  pre { font-size: 24pt; text-align: left }
   .slide {
     box-sizing: border-box;
     padding: 100px;
@@ -30,6 +30,7 @@
     background-image: -webkit-linear-gradient(top, #020202, #261c40 50%, #6e687f);
     color: #fff;
 
+    text-align: center;
     font-family: helvetica, sans-serif;
     font-size: 38pt;
     font-weight: 200;
@@ -91,7 +92,10 @@
         ]),
 
         //code
-        !slide.codes ? "" : m("pre", slide.codes.join("\n"))
+        !slide.codes ? "" : m("pre", slide.codes.join("\n")),
+
+        //embed
+        !slide.embed ? "" : m("iframe", slide.embed)
       ]),
     ];
   };

@@ -34,15 +34,15 @@
     "title": "Promises",
     "subtitle": "Makes Async similar to Sync",
     "codes": [
-      "//get a list of things                               ",
-      "var things = m.request({method: \"GET\",             ",
-      "                        url: \"/things.json\"});     ",
-      "                                                     ",
-      "//then slice it                                      ",
-      "  .then(function(list) { return list.slice(0, 10) });",
-      "                                                     ",
-      "//then slice it some more                            ",
-      "  .then(function(list) { return list.slice(0, 3) }); "
+      "//get a list of things                             ",
+      "var things = m.request({method: \"GET\",           ",
+      "                        url: \"/things.json\"});   ",
+      "                                                   ",
+      "//then slice it                                    ",
+      ".then(function(list) { return list.slice(0, 10) });",
+      "                                                   ",
+      "//then slice it some more                          ",
+      ".then(function(list) { return list.slice(0, 3) }); "
     ]
   },
 
@@ -141,14 +141,16 @@
   },
 
   {
-    "title": "Demo: fetching data",
-    "codes": [
-      "var demo = {};                                    ",
-      "                                                  ",
-      "demo.controller = function() {                    ",
-      "  this.things = m.request({method: \"GET\",       ",
-      "                           url: \"/things.json\"})",
-      "}                                                 "
-    ]
+    "title": "Demo 1",
+    "subtitle": "Mithril Reader"
+  },
+
+  {
+    "embed": {
+      "src": "codepen_vEKWKv/index.html",
+      "width": "375",
+      "height": "667",
+      "frameborder": "0"
+    }
   }
 ]

@@ -1,0 +1,307 @@
+##
+# Parsers
+#
+class Readability
+  @parse: (url) ->
+    url = encodeURIComponent(url).replace(/%20/g, "+")
+    url = "https://readability.com/api/content/v1/parser?token=#{library.READABILITY_TOKEN}&url=#{url}"
+    m.request
+      url: url
+      dataType: "jsonp"
+      unwrapError: (response) ->
+        JSON.parse response
+
+##
+# Components
+#
+appearance = {}
+
+appearance.config = (ctrl) ->
+  (element, is_initialized, context) ->
+    elem = $(element)
+
+    unless is_initialized
+      content = document.createElement "div"
+      m.render content, appearance.content(ctrl)
+
+      elem.popover
+        content: content
+        html: true
+        placement: "bottom"
+        viewport:
+          selector: "#book"
+          padding: 10
+
+      elem.on "click", (e) ->
+        $(".navbar-btn").not(elem).popover "hide"
+
+appearance.controller = ->
+  ctrl =
+    sizes: ["small", "large"]
+    fonts: ["athelas", "charter", "georgia", "iowan", "palatino", "seravek", "times"]
+    themes: ["white", "sepia", "night"]
+    selected_size: m.prop "small"
+    selected_font: m.prop "iowan"
+    selected_theme: m.prop "white"
+  ctrl
+
+appearance.content = (ctrl) ->
+  m "div.container-fluid", [
+    m "div.row", [
+      for size in ctrl.sizes
+        m "div.col-xs-6", [
+          m "div.radio", [
+            m "label.text-capitalize", [
+              m "input[type=radio]",
+                name: "fontsize"
+                value: size
+                checked: size is ctrl.selected_size()
+                onchange: m.withAttr "value", ctrl.selected_size
+              if size is "small" then m("small", "A") else "A"
+            ]
+          ]
+        ]
+    ]
+    m "div.row", [
+      m "div.col-xs-4", [
+        m "div.text", "Fonts"
+      ]
+      m "div.col-xs-8", [
+        m "select.form-control.input-sm.text-capitalize", { onchange: m.withAttr("value", ctrl.selected_font) }, [
+          for font in ctrl.fonts
+            m "option",
+              value: font
+              selected: font is ctrl.selected_font()
+            , if font is "times" then "times new roman" else font
+        ]
+      ]
+    ]
+    m "div.row", [
+      for theme in ctrl.themes
+         m "div.col-xs-4", [
+          m "div.radio", [
+            m "label.text-capitalize", [
+              m "input[type=radio]",
+                name: "theme"
+                value: theme
+                checked: theme is ctrl.selected_theme()
+                onchange: m.withAttr "value", ctrl.selected_theme
+              theme
+            ]
+          ]
+        ]
+    ]
+  ]
+
+appearance.view = (ctrl) ->
+  m "button[type=button].btn.btn-link.btn-lg.navbar-btn", { config: appearance.config(ctrl) }, [
+    m "span.glyphicon.glyphicon-font", "aria-hidden": true
+  ]
+
+location = {}
+
+location.config = (ctrl) ->
+  (element, is_initialized, context) ->
+    elem = $(element)
+
+    unless is_initialized
+      content = document.createElement "div"
+      m.render content, location.content(ctrl)
+
+      elem.popover
+        content: content
+        html: true
+        placement: "bottom"
+        viewport:
+          selector: "#book"
+          padding: 10
+
+      elem.on "click", (e) ->
+        $(".navbar-btn").not(elem).popover "hide"
+
+location.controller = ->
+  ctrl =
+    url: m.prop "http://robertheaton.com/2014/12/08/fun-with-your-friends-facebook-and-tinder-session-tokens/"
+  ctrl
+
+location.content = (ctrl) ->
+  m "div.container-fluid", [
+    m "div.row", [
+      m "div.col-xs-12", [
+        m "div.input-group", [
+          m "input[type=text].form-control",
+            onchange: m.withAttr "value", ctrl.url
+            value: ctrl.url()
+          m "span.input-group-btn", [
+            m "button[type=button].btn.btn-link", { onclick: ctrl.onclick }, "Open"
+          ]
+        ]
+      ]
+    ]
+  ]
+
+location.view = (ctrl) ->
+  m "button[type=button].btn.btn-link.btn-lg.navbar-btn", { config: location.config(ctrl) }, "Library"
+
+##
+# App
+#
+library = {}
+
+library.READABILITY_TOKEN ?= prompt "Readability API Key"
+
+library.config = (ctrl) ->
+  (element, is_initialized, context) ->
+    elem = $(element)
+
+    # unless is_initialized
+      # empty
+
+library.controller = ->
+  # empty
+
+library.view = (ctrl) ->
+  [
+
+  ]
+
+
+book = {}
+
+book.config = (ctrl) ->
+  (element, is_initialized, context) ->
+    elem = $(element)
+
+    unless is_initialized
+      elem.on "click", (e) ->
+        m.startComputation()
+        if $(".popover.in").length
+          $(".navbar-btn").popover "hide"
+        else
+          $(".navbar").toggleClass "is-hidden"
+        m.endComputation()
+
+      $(window).on "scroll", (e) ->
+        m.startComputation()
+        ctrl.paginate()
+        m.endComputation()
+
+      $ ->
+        $(window).scroll()
+
+book.controller = ->
+  appearance_ctrl = appearance.controller()
+  location_ctrl = location.controller()
+  library_ctrl = library.controller()
+  ctrl =
+    appearance_ctrl: appearance_ctrl
+    size: appearance_ctrl.selected_size
+    font: appearance_ctrl.selected_font
+    theme: appearance_ctrl.selected_theme
+    location_ctrl: location_ctrl
+    url: location_ctrl.url
+    book: m.prop {}
+    error: m.prop {}
+    total_pages: m.prop 1
+    current_page: m.prop 1
+    parse: ->
+      if library.READABILITY_TOKEN?.length is 40
+        Readability.parse(ctrl.url()).then(ctrl.book, ctrl.error)
+      else
+        ctrl.error { error: "Invalid API Key" }
+    paginate: ->
+      window_height = $(window).height()
+      document_height = $(document).height()
+      scroll_position = $(document).scrollTop()
+      total_pages = Math.ceil document_height / window_height
+
+      if document_height - scroll_position <= window_height + 70
+        current_page = total_pages
+      else
+        current_page = Math.floor(scroll_position / window_height) + 1
+
+      ctrl.total_pages(total_pages)
+      ctrl.current_page(current_page)
+    scrolltop: ->
+      $(window).scrollTop 0
+  ctrl.parse()
+  ctrl
+
+book.view = (ctrl) ->
+  [
+    m "div#book", { class: "theme-#{ctrl.theme()}" }, [
+      m "nav[role=navigation]#toolbar.navbar.navbar-default.navbar-fixed-top", [
+        m "div.container-fluid", [
+          m "div.row", [
+            m "div.col-xs-6.l-left", [
+              location.view $.extend {}, ctrl.location_ctrl, { onclick: ctrl.parse }
+              m "button[type=button].btn.btn-link.btn-lg.navbar-btn", [
+                m "span.glyphicon.glyphicon-th-list", "aria-hidden": true
+              ]
+            ]
+            m "div.col-xs-6.l-right", [
+              appearance.view $.extend {}, ctrl.appearance_ctrl
+              m "button[type=button].btn.btn-link.btn-lg.navbar-btn", [
+                m "span.glyphicon.glyphicon-search", "aria-hidden": true
+              ]
+              m "button[type=button].btn.btn-link.btn-lg.navbar-btn", [
+                m "span.glyphicon.glyphicon-bookmark", "aria-hidden": true
+              ]
+            ]
+          ]
+        ]
+      ]
+      m "div.container-fluid", { config: book.config(ctrl) }, [
+        m "div.row", [
+          m "div#page.col-sm-10.col-sm-offset-1.col-md-8.col-md-offset-2.col-lg-6.col-lg-offset-3", { class: ["font-#{ctrl.font()}", "font-#{ctrl.size()}"].join(" ") }, [
+            m "h1", ctrl.book().title or ""
+            m "div", m.trust ctrl.book().content or ""
+          ]
+        ]
+      ]
+      m "nav#statusbar.navbar.navbar-default.navbar-fixed-bottom", [
+        m "div.container-fluid", [
+          if ctrl.error().error?
+            m "div.row", [
+              m "div.col-xs-12", [
+                m "p.navbar-text.text-center", [
+                  m "span.glyphicon.glyphicon-exclamation-sign", { "aria-hidden": true }
+                  m "strong", ctrl.error().error
+                ]
+              ]
+            ]
+          else
+            m "div.row", [
+              m "div.col-xs-4.l-left", [
+                m "p.navbar-text", [
+                  if ctrl.current_page() > 1
+                    m "a[href=#]", { onclick: ctrl.scrolltop }, [
+                      m "strong", "Back to p.1"
+                    ]
+                ]
+              ]
+              m "div.col-xs-4.l-center", [
+                m "p.navbar-text.text-center", [
+                  m "strong", "#{ctrl.current_page()} of #{ctrl.total_pages()}"
+                ]
+              ]
+              m "div.col-xs-4.l-right", [
+                m "p.navbar-text.navbar-right", [
+                  if ctrl.current_page() is ctrl.total_pages()
+                    m "strong", "last page"
+                  else
+                    m "strong", "#{ctrl.total_pages() - ctrl.current_page()} pages left"
+                ]
+              ]
+            ]
+        ]
+      ]
+    ]
+  ]
+
+m.module document.body, book
+# m.route.mode = "hash"
+# m.route document.body,
+#         "/books",
+#         "/books": library
+#         "/books/:id": book
