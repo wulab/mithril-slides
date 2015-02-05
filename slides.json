@@ -142,6 +142,34 @@
 
   {
     "title": "Demo 1",
+    "subtitle": "Mithril Todo"
+  },
+
+  {
+    "embed": {
+      "src": "codepen_empmYY/index.html",
+      "width": "889",
+      "height": "667",
+      "frameborder": "0"
+    }
+  },
+
+  {
+    "title": "Demo 2",
+    "subtitle": "Mithril Search"
+  },
+
+  {
+    "embed": {
+      "src": "codepen_ByoNXp/index.html",
+      "width": "889",
+      "height": "667",
+      "frameborder": "0"
+    }
+  },
+
+  {
+    "title": "Demo 3",
     "subtitle": "Mithril Reader"
   },
 

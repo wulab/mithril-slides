@@ -1,0 +1,15 @@
+.input-group {
+  max-width: 480px;
+}
+
+.media {
+  &:first-child {
+    margin-top: 15px;
+  }
+  
+  .media-body {
+    p {
+      margin-bottom: 5px;
+    }
+  }
+}

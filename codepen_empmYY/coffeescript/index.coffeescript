@@ -1,0 +1,63 @@
+# module
+todo = {}
+
+# model
+class Todo
+  constructor: (data) ->
+    @description = m.prop data.description
+    @done = m.prop false
+
+todo.Todo = Todo
+todo.TodoList = Array
+
+# view-model
+class VM
+  constructor: ->
+    @list = new todo.TodoList
+    @list.push new todo.Todo(description: d) for d in ["Design ui", "Write code"]
+    @description = m.prop ""
+  add: =>
+    if @description()
+      @list.push new todo.Todo(description: @description())
+      @description ""
+
+todo.VM = VM
+
+# controller
+todo.controller = ->
+  todo.vm = new todo.VM
+
+# view
+todo.view = ->
+  m "div.container", [
+    m "h1.page-header", "A Todo Application"
+    m "form[role=form]", [
+      m "div.input-group", [
+        m "input[type=text].form-control",
+      		onchange: m.withAttr "value", todo.vm.description
+      		value: todo.vm.description()
+        m "span.input-group-btn", [
+          m "button[type=button].btn.btn-default",
+            onclick: todo.vm.add
+          , "Add"
+        ]
+      ]
+      todo.vm.list.map (task, index) ->
+        m "div.checkbox", [
+          m "label", [
+            m "input[type=checkbox]",
+              onclick: m.withAttr "checked", task.done
+              checked: task.done()
+            m "span",
+              style:
+                textDecoration: if task.done() then "line-through" else "none"
+            , task.description()
+          ]
+        ]
+    ]
+  ]
+
+# initialize
+m.module document.body,
+  controller: todo.controller
+  view: todo.view
