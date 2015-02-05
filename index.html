@@ -1,0 +1,102 @@
+<!doctype html>
+<title>mithril.js</title>
+<style>
+  body {
+    margin: 0;
+    background-color: #000;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -webkit-user-select: none;
+    /*cursor: none;*/
+  }
+  h1, h2, h3 { text-align: center; font-weight: 100; }
+  h1 { font-size: 80pt; margin-bottom: .5em }
+  h2 { font-size: 40pt }
+  h3 { font-size: 32pt }
+  ul { -webkit-padding-start: 36pt }
+  li { margin-bottom: 42pt }
+  pre { font-size: 24pt }
+  .slide {
+    box-sizing: border-box;
+    padding: 100px;
+    position: absolute;
+    top: 0;
+    right: 10%;
+    bottom: 0;
+    left: 10%;
+    overflow: hidden;
+
+    background-color: #F07575;
+    background-image: -webkit-linear-gradient(top, #020202, #261c40 50%, #6e687f);
+    color: #fff;
+
+    font-family: helvetica, sans-serif;
+    font-size: 38pt;
+    font-weight: 200;
+  }
+  .slide > :first-child { margin-top: 0; }
+</style>
+<script src="mithril.js"></script>
+<script>
+  //namespace
+  var app = {};
+
+  //config
+  app.config = function(ctrl) {
+    return function(element, isInitialized) {
+      if (!isInitialized) {
+        window.onclick = function(e) {
+          m.startComputation();
+          ctrl.rotate();
+          m.endComputation();
+        };
+      }
+    }
+  }
+
+  //model
+  app.SlideList = function() {
+    return m.request({method: "GET", url: "slides.json"});
+  };
+
+  //controller
+  app.controller = function() {
+    var slides = app.SlideList();
+    return {
+      slide: function() {
+        return slides()[0];
+      },
+      rotate: function() {
+        slides().push(slides().shift());
+      }
+    }
+  };
+
+  //view
+  app.view = function(ctrl) {
+    var slide = ctrl.slide();
+    return [
+      m("div.slide", {config: app.config(ctrl)}, [
+        //title
+        !slide.title ? "" : m("h1", m.trust(slide.title)),
+
+        //subtitle
+        !slide.subtitle ? "" : m("h3", m.trust(slide.subtitle)),
+
+        //bullets
+        !slide.bullets ? "" : m("ul", [
+          slide.bullets.map(function(bullet) {
+            return m("li", bullet);
+          })
+        ]),
+
+        //code
+        !slide.codes ? "" : m("pre", slide.codes.join("\n"))
+      ]),
+    ];
+  };
+
+  //initialize
+  document.body = document.createElement("body");
+  m.module(document.body, app);
+</script>

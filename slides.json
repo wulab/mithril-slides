@@ -1,0 +1,154 @@
+[
+  {
+    "title": "Mithril.js",
+    "subtitle": "Weera Wu"
+  },
+
+  {
+    "title": "Design Goals",
+    "bullets": [
+      "Small",
+      "Fast",
+      "Pragmatic"
+    ]
+  },
+
+  {
+    "title": "Getter-Setters",
+    "subtitle": "Same as variables, but functional",
+    "codes": [
+      "//a variable                         ",
+      "var thing = \"Macbook\";             ",
+      "thing = \"iPhone\";                  ",
+      "console.log( things ); // \"iPhone\" ",
+      "                                     ",
+      "                                     ",
+      "//a getter-setter                    ",
+      "var thing = m.prop( \"MacBook\" );   ",
+      "thing( \"iPhone\" );                 ",
+      "console.log( thing() ); // \"iPhone\""
+    ]
+  },
+
+  {
+    "title": "Promises",
+    "subtitle": "Makes Async similar to Sync",
+    "codes": [
+      "//get a list of things                               ",
+      "var things = m.request({method: \"GET\",             ",
+      "                        url: \"/things.json\"});     ",
+      "                                                     ",
+      "//then slice it                                      ",
+      "  .then(function(list) { return list.slice(0, 10) });",
+      "                                                     ",
+      "//then slice it some more                            ",
+      "  .then(function(list) { return list.slice(0, 3) }); "
+    ]
+  },
+
+  {
+    "title": "Virtual DOM",
+    "subtitle": "Just like HTML, but in Javascript",
+    "codes": [
+      "m(\"div\", [                                        ",
+      "  m(\"a\", {href: \"http://google.ca\"}, \"Google\")",
+      "])                                                  ",
+      "                                                    ",
+      "// <div>                                            ",
+      "//   <a href=\"http://google.ca\">Google</a>        ",
+      "// </div>                                           "
+    ]
+  },
+
+  {
+    "title": "Why not just use HTML?",
+    "subtitle": "Templating = Html + Logic*<br><br>*Logic is complex!"
+  },
+
+  {
+    "title": "Case study: Angular.js",
+    "subtitle": "Loop-related things...",
+    "bullets": [
+      "ng-repeat",
+      "track by",
+      "ng-repeat-start/ng-repeat-end"
+    ]
+  },
+
+  {
+    "bullets": [
+      "ng-options and list comprehension syntax",
+      "ng-init",
+      "filters",
+      "$index",
+      "$scope semantics",
+      "error handling semantics"
+    ]
+  },
+
+  {
+    "title": "Case study: jQuery",
+    "subtitle": "Loops: Need a lot of boilerplate code",
+    "bullets": [
+      "render whole list",
+      "update one item",
+      "add item",
+      "remove item"
+    ]
+  },
+
+  {
+    "bullets": [
+      "map data to element",
+      "find element by data / find data by element (to update / remove)",
+      "diff",
+      "batch redraws"
+    ]
+  },
+
+  {
+    "title": "HTML is easier to map onto javascript than the other way around",
+    "subtitle": "Let the browser and the framework do the heavy lifting"
+  },
+
+  {
+    "codes": [
+      "m(\"div\", [                          ",
+      "  [1,2,3].map(function(num) {         ",
+      "    return m(\"a\",                   ",
+      "             {href: \"/page/\" + num},",
+      "             \"Page \" + num)         ",
+      "  })                                  ",
+      "])                                    ",
+      "                                      ",
+      "// <div>                              ",
+      "//   <a href=\"/page/1\">Page 1</a>   ",
+      "//   <a href=\"/page/2\">Page 2</a>   ",
+      "//   <a href=\"/page/3\">Page 3</a>   ",
+      "// </div>                             "
+    ]
+  },
+
+  {
+    "title": "Portable knowledge",
+    "bullets": [
+      "Promises",
+      ".map, .filter, and other FP concepts",
+      "CSS syntax (Emmett/ZenCoding)",
+      "Refactoring techniques",
+      "etc"
+    ]
+  },
+
+  {
+    "title": "Demo: fetching data",
+    "codes": [
+      "var demo = {};                                    ",
+      "                                                  ",
+      "demo.controller = function() {                    ",
+      "  this.things = m.request({method: \"GET\",       ",
+      "                           url: \"/things.json\"})",
+      "}                                                 "
+    ]
+  }
+]
