@@ -180,5 +180,19 @@
       "height": "667",
       "frameborder": "0"
     }
+  },
+
+  {
+    "title": "Demo 4",
+    "subtitle": "Mithril Slide"
+  },
+
+  {
+
+  },
+
+  {
+    "title": "Thank you!",
+    "subtitle": "Sources are available at<br><br>http://codepen.io/wulab"
   }
 ]
