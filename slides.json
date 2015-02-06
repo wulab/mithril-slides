@@ -22,7 +22,6 @@
       "thing = \"iPhone\";                  ",
       "console.log( things ); // \"iPhone\" ",
       "                                     ",
-      "                                     ",
       "//a getter-setter                    ",
       "var thing = m.prop( \"MacBook\" );   ",
       "thing( \"iPhone\" );                 ",
