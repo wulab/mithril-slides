@@ -1,147 +1,106 @@
 [
   {
-    "title": "Mithril.js",
+    "title": "<br><br>Mithril.js",
     "subtitle": "Weera Wu"
   },
 
   {
-    "title": "Design Goals",
+    "title": "<br><br>What is it?"
+  },
+
+  {
+    "title": "<br><br>",
+    "subtitle": "Mithril is a client-side MVC framework.<br><br>A tool to organize code in a way that is easy to think about and to maintain."
+  },
+
+  {
+    "title": "Light-weight",
     "bullets": [
-      "Small",
-      "Fast",
-      "Pragmatic"
+      "Only 5kb gzipped, no dependencies",
+      "Small API, small learning curve"
     ]
   },
 
   {
-    "title": "Getter-Setters",
-    "subtitle": "Same as variables, but functional",
+    "title": "Robust",
+    "bullets": [
+      "Safe-by-default templates",
+      "Hierarchical MVC via components"
+    ]
+  },
+
+  {
+    "title": "Fast",
+    "bullets": [
+      "Virtual DOM diffing and compilable templates",
+      "Intelligent auto-redrawing system"
+    ]
+  },
+
+  {
+    "title": "Sample code",
     "codes": [
-      "//a variable                         ",
-      "var thing = \"Macbook\";             ",
-      "thing = \"iPhone\";                  ",
-      "console.log( things ); // \"iPhone\" ",
-      "                                     ",
-      "//a getter-setter                    ",
-      "var thing = m.prop( \"MacBook\" );   ",
-      "thing( \"iPhone\" );                 ",
-      "console.log( thing() ); // \"iPhone\""
+      "//namespace",
+      "var app = {};",
+      "",
+      "//model",
+      "app.PageList = function() {",
+      "  return m.request({method: \"GET\", url: \"pages.json\"});",
+      "};"
     ]
-  },
-
-  {
-    "title": "Promises",
-    "subtitle": "Makes Async similar to Sync",
-    "codes": [
-      "//get a list of things                             ",
-      "var things = m.request({method: \"GET\",           ",
-      "                        url: \"/things.json\"});   ",
-      "                                                   ",
-      "//then slice it                                    ",
-      ".then(function(list) { return list.slice(0, 10) });",
-      "                                                   ",
-      "//then slice it some more                          ",
-      ".then(function(list) { return list.slice(0, 3) }); "
-    ]
-  },
-
-  {
-    "title": "Virtual DOM",
-    "subtitle": "Just like HTML, but in Javascript",
-    "codes": [
-      "m(\"div\", [                                        ",
-      "  m(\"a\", {href: \"http://google.ca\"}, \"Google\")",
-      "])                                                  ",
-      "                                                    ",
-      "// <div>                                            ",
-      "//   <a href=\"http://google.ca\">Google</a>        ",
-      "// </div>                                           "
-    ]
-  },
-
-  {
-    "title": "Why not just use HTML?",
-    "subtitle": "Templating = Html + Logic*<br><br>*Logic is complex!"
-  },
-
-  {
-    "title": "Case study: Angular.js",
-    "subtitle": "Loop-related things...",
-    "bullets": [
-      "ng-repeat",
-      "track by",
-      "ng-repeat-start/ng-repeat-end"
-    ]
-  },
-
-  {
-    "bullets": [
-      "ng-options and list comprehension syntax",
-      "ng-init",
-      "filters",
-      "$index",
-      "$scope semantics",
-      "error handling semantics"
-    ]
-  },
-
-  {
-    "title": "Case study: jQuery",
-    "subtitle": "Loops: Need a lot of boilerplate code",
-    "bullets": [
-      "render whole list",
-      "update one item",
-      "add item",
-      "remove item"
-    ]
-  },
-
-  {
-    "bullets": [
-      "map data to element",
-      "find element by data / find data by element (to update / remove)",
-      "diff",
-      "batch redraws"
-    ]
-  },
-
-  {
-    "title": "HTML is easier to map onto javascript than the other way around",
-    "subtitle": "Let the browser and the framework do the heavy lifting"
   },
 
   {
     "codes": [
-      "m(\"div\", [                          ",
-      "  [1,2,3].map(function(num) {         ",
-      "    return m(\"a\",                   ",
-      "             {href: \"/page/\" + num},",
-      "             \"Page \" + num)         ",
-      "  })                                  ",
-      "])                                    ",
-      "                                      ",
-      "// <div>                              ",
-      "//   <a href=\"/page/1\">Page 1</a>   ",
-      "//   <a href=\"/page/2\">Page 2</a>   ",
-      "//   <a href=\"/page/3\">Page 3</a>   ",
-      "// </div>                             "
+      "//controller",
+      "app.controller = function() {",
+      "  var pages = app.PageList();",
+      "  return {",
+      "    pages: pages,",
+      "    rotate: function() {",
+      "      pages().push(pages().shift());",
+      "    }",
+      "  }",
+      "};"
     ]
   },
 
   {
-    "title": "Portable knowledge",
-    "bullets": [
-      "Promises",
-      ".map, .filter, and other FP concepts",
-      "CSS syntax (Emmett/ZenCoding)",
-      "Refactoring techniques",
-      "etc"
+    "codes": [
+      "//view",
+      "app.view = function(ctrl) {",
+      "  return [",
+      "    ctrl.pages().map(function(page) {",
+      "      return m(\"a\", {href: page.url}, page.title);",
+      "    }),",
+      "    m(\"button\", {onclick: ctrl.rotate}, \"Rotate links\")",
+      "  ];",
+      "};",
+      "",
+      "//initialize",
+      "m.module(document.getElementById(\"example\"), app);"
     ]
   },
 
   {
-    "title": "Demo 1",
-    "subtitle": "Mithril Todo"
+    "title": "<br><br>How about performance?"
+  },
+
+  {
+    "title": "<br><br>",
+    "image": {
+      "src": "performance.png",
+      "width": "800"
+    }
+  },
+
+  {
+    "title": "<br><br>What can you do with it?"
+  },
+
+  {
+    "title": "<br><br>Demo 1",
+    "subtitle": "Todo App"
   },
 
   {
@@ -154,8 +113,8 @@
   },
 
   {
-    "title": "Demo 2",
-    "subtitle": "Mithril Search"
+    "title": "<br><br>Demo 2",
+    "subtitle": "Search App"
   },
 
   {
@@ -168,8 +127,8 @@
   },
 
   {
-    "title": "Demo 3",
-    "subtitle": "Mithril Reader"
+    "title": "<br><br>Demo 3",
+    "subtitle": "Reader App"
   },
 
   {
@@ -182,16 +141,32 @@
   },
 
   {
-    "title": "Demo 4",
-    "subtitle": "Mithril Slide"
+    "title": "<br><br>Demo 4",
+    "subtitle": "Presentation App"
   },
 
   {
-
+    "title": "<br><br>;-)",
+    "subtitle": "You have already seen it"
   },
 
   {
-    "title": "Thank you!",
+    "title": "<br><br>▲",
+    "subtitle": "These slides are inside Mithril!"
+  },
+
+  {
+    "title": "<br><br>",
+    "codes": [
+      "{",
+      "  \"title\": \"<br><br>▲\",",
+      "  \"subtitle\": \"These slides are inside Mithril!\"",
+      "},"
+    ]
+  },
+
+  {
+    "title": "<br><br>Thank you!",
     "subtitle": "Sources are available at<br><br>http://codepen.io/wulab"
   }
 ]

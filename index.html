@@ -1,13 +1,13 @@
 <!doctype html>
 <title>mithril.js</title>
 <style>
+  html { cursor: none; }
   body {
     margin: 0;
     background-color: #000;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -webkit-user-select: none;
-    cursor: none;
   }
   h1, h2, h3 { text-align: center; font-weight: 100 }
   h1 { font-size: 80pt; margin-bottom: .5em }
@@ -90,6 +90,9 @@
             return m("li", bullet);
           })
         ]),
+
+        //image
+        !slide.image ? "" : m("img", slide.image),
 
         //code
         !slide.codes ? "" : m("pre", slide.codes.join("\n")),
