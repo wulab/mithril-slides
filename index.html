@@ -53,9 +53,26 @@
   app.config = function(ctrl) {
     return function(element, isInitialized) {
       if (!isInitialized) {
-        window.onclick = function(e) {
+        window.onclick = play;
+        window.onkeydown = function(e) {
+          if (e.keyCode == 13 || e.keyCode == 32) {
+            play();
+          };
+        }
+
+        function play() {
           m.startComputation();
-          ctrl.rotate();
+
+          if (!document.webkitFullscreenElement) {
+            element.webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT);
+
+            if (!document.webkitFullscreenElement) {
+              element.webkitRequestFullScreen();
+            };
+          } else {
+            ctrl.rotate();
+          };
+
           m.endComputation();
         };
       }
