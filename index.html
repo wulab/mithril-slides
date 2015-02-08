@@ -10,32 +10,39 @@
     -webkit-user-select: none;
   }
   h1, h2, h3 { text-align: center; font-weight: 100 }
-  h1 { font-size: 80pt; margin-bottom: .5em }
+  h1 { font-size: 80pt; margin-bottom: 40pt }
   h2 { font-size: 40pt }
   h3 { font-size: 32pt }
   ul { -webkit-padding-start: 36pt; text-align: left }
   li { margin-bottom: 42pt }
   pre { font-size: 24pt; text-align: left; line-height: 1.4 }
-  .slide {
-    box-sizing: border-box;
-    padding: 100px;
+  #slide {
     position: absolute;
     top: 0;
-    right: 10%;
+    right: 8%;
     bottom: 0;
-    left: 10%;
+    left: 8%;
     overflow: hidden;
 
     background-color: #F07575;
     background-image: -webkit-linear-gradient(top, #020202, #261c40 50%, #6e687f);
     color: #fff;
 
-    text-align: center;
     font-family: helvetica, sans-serif;
     font-size: 38pt;
     font-weight: 200;
   }
-  .slide > :first-child { margin-top: 0; }
+  #objects {
+    position: absolute;
+    top: 50%;
+    right: 8%;
+    left: 8%;
+    -webkit-transform: translate(0, -50%);
+
+    text-align: center;
+  }
+  #objects > :first-child { margin-top: 0; }
+  #objects > :last-child { margin-bottom: 0; }
 </style>
 <script src="mithril.js"></script>
 <script>
@@ -77,28 +84,30 @@
   app.view = function(ctrl) {
     var slide = ctrl.slide();
     return [
-      m("div.slide", {config: app.config(ctrl)}, [
-        //title
-        !slide.title ? "" : m("h1", m.trust(slide.title)),
+      m("div#slide", {config: app.config(ctrl)}, [
+        m("div#objects", [
+          //title
+          !slide.title ? "" : m("h1", m.trust(slide.title)),
 
-        //subtitle
-        !slide.subtitle ? "" : m("h3", m.trust(slide.subtitle)),
+          //subtitle
+          !slide.subtitle ? "" : m("h3", m.trust(slide.subtitle)),
 
-        //bullets
-        !slide.bullets ? "" : m("ul", [
-          slide.bullets.map(function(bullet) {
-            return m("li", bullet);
-          })
-        ]),
+          //bullets
+          !slide.bullets ? "" : m("ul", [
+            slide.bullets.map(function(bullet) {
+              return m("li", bullet);
+            })
+          ]),
 
-        //image
-        !slide.image ? "" : m("img", slide.image),
+          //image
+          !slide.image ? "" : m("img", slide.image),
 
-        //code
-        !slide.codes ? "" : m("pre", slide.codes.join("\n")),
+          //code
+          !slide.codes ? "" : m("pre", slide.codes.join("\n")),
 
-        //embed
-        !slide.embed ? "" : m("iframe", slide.embed)
+          //embed
+          !slide.embed ? "" : m("iframe", slide.embed)
+        ])
       ]),
     ];
   };

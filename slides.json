@@ -1,15 +1,14 @@
 [
   {
-    "title": "<br><br>Mithril.js",
+    "title": "Mithril.js",
     "subtitle": "Weera Wu"
   },
 
   {
-    "title": "<br><br>What is it?"
+    "title": "What is it?"
   },
 
   {
-    "title": "<br><br>",
     "subtitle": "Mithril is a client-side MVC framework.<br><br>A tool to organize code in a way that is easy to think about and to maintain."
   },
 
@@ -83,11 +82,10 @@
   },
 
   {
-    "title": "<br><br>How about performance?"
+    "title": "What about performance?"
   },
 
   {
-    "title": "<br><br>",
     "image": {
       "src": "performance.png",
       "width": "800"
@@ -95,11 +93,11 @@
   },
 
   {
-    "title": "<br><br>What can you do with it?"
+    "title": "What can you do with it?"
   },
 
   {
-    "title": "<br><br>Demo 1",
+    "title": "Demo 1",
     "subtitle": "Todo App"
   },
 
@@ -113,7 +111,7 @@
   },
 
   {
-    "title": "<br><br>Demo 2",
+    "title": "Demo 2",
     "subtitle": "Search App"
   },
 
@@ -127,7 +125,7 @@
   },
 
   {
-    "title": "<br><br>Demo 3",
+    "title": "Demo 3",
     "subtitle": "Reader App"
   },
 
@@ -141,32 +139,41 @@
   },
 
   {
-    "title": "<br><br>Demo 4",
+    "title": "Demo 4",
     "subtitle": "Presentation App"
   },
 
   {
-    "title": "<br><br>;-)",
+    "title": ";-)",
     "subtitle": "You have already seen it"
   },
 
   {
-    "title": "<br><br>▲",
+    "title": "▲",
     "subtitle": "These slides are inside Mithril!"
   },
 
   {
-    "title": "<br><br>",
     "codes": [
       "{",
-      "  \"title\": \"<br><br>▲\",",
+      "  \"title\": \"Demo 4\",",
+      "  \"subtitle\": \"Presentation App\"",
+      "},",
+      "",
+      "{",
+      "  \"title\": \";-)\",",
+      "  \"subtitle\": \"You have already seen it\"",
+      "},",
+      "",
+      "{",
+      "  \"title\": \"▲\",",
       "  \"subtitle\": \"These slides are inside Mithril!\"",
       "},"
     ]
   },
 
   {
-    "title": "<br><br>Thank you!",
+    "title": "Thank you!",
     "subtitle": "Sources are available at<br><br>http://codepen.io/wulab"
   }
 ]
