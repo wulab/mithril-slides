@@ -87,7 +87,7 @@
 
   {
     "image": {
-      "src": "performance.png",
+      "src": "assets/performance.png",
       "width": "800"
     }
   },
@@ -103,7 +103,7 @@
 
   {
     "embed": {
-      "src": "codepen_empmYY/index.html",
+      "src": "assets/codepen_empmYY/index.html",
       "width": "889",
       "height": "667",
       "frameborder": "0"
@@ -117,7 +117,7 @@
 
   {
     "embed": {
-      "src": "codepen_ByoNXp/index.html",
+      "src": "assets/codepen_ByoNXp/index.html",
       "width": "889",
       "height": "667",
       "frameborder": "0"
@@ -131,7 +131,7 @@
 
   {
     "embed": {
-      "src": "codepen_vEKWKv/index.html",
+      "src": "assets/codepen_vEKWKv/index.html",
       "width": "375",
       "height": "667",
       "frameborder": "0"
