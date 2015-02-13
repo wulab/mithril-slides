@@ -1,7 +1,7 @@
 <!doctype html>
 <title>mithril.js</title>
 <style>
-  html { cursor: none; }
+  html { cursor: none }
   body {
     margin: 0;
     background-color: #000;
@@ -41,24 +41,21 @@
 
     text-align: center;
   }
-  #objects > :first-child { margin-top: 0; }
-  #objects > :last-child { margin-bottom: 0; }
+  #objects > :first-child { margin-top: 0 }
+  #objects > :last-child { margin-bottom: 0 }
 </style>
 <script src="mithril.js"></script>
 <script>
   //namespace
   var app = {};
-
   //config
   app.config = function(ctrl) {
     return function(element, isInitialized) {
       if (!isInitialized) {
         window.onclick = play;
         window.onkeydown = function(e) {
-          if (e.keyCode == 13 || e.keyCode == 32) {
-            play();
-          };
-        }
+          if (e.keyCode == 13 || e.keyCode == 32) { play() }
+        };
 
         function play() {
           m.startComputation();
@@ -75,60 +72,39 @@
 
           m.endComputation();
         };
-      }
-    }
-  }
-
+      };
+    };
+  };
   //model
   app.SlideList = function() {
-    return m.request({method: "GET", url: "slides.json"});
+    return m.request({ method: "GET", url: "slides.json" });
   };
-
   //controller
   app.controller = function() {
     var slides = app.SlideList();
     return {
-      slide: function() {
-        return slides()[0];
-      },
-      rotate: function() {
-        slides().push(slides().shift());
-      }
-    }
+      slide:  function() { return slides()[0] },
+      rotate: function() { slides().push(slides().shift()) }
+    };
   };
-
   //view
   app.view = function(ctrl) {
     var slide = ctrl.slide();
     return [
-      m("div#slide", {config: app.config(ctrl)}, [
+      m("div#slide", { config: app.config(ctrl) }, [
         m("div#objects", [
-          //title
-          !slide.title ? "" : m("h1", m.trust(slide.title)),
-
-          //subtitle
-          !slide.subtitle ? "" : m("h3", m.trust(slide.subtitle)),
-
-          //bullets
-          !slide.bullets ? "" : m("ul", [
-            slide.bullets.map(function(bullet) {
-              return m("li", bullet);
-            })
-          ]),
-
-          //image
-          !slide.image ? "" : m("img", slide.image),
-
-          //code
-          !slide.codes ? "" : m("pre", slide.codes.join("\n")),
-
-          //embed
-          !slide.embed ? "" : m("iframe", slide.embed)
+          !slide.title    ? "" : m("h1"    , m.trust(slide.title)   ),
+          !slide.subtitle ? "" : m("h3"    , m.trust(slide.subtitle)),
+          !slide.image    ? "" : m("img"   , slide.image            ),
+          !slide.codes    ? "" : m("pre"   , slide.codes.join("\n") ),
+          !slide.embed    ? "" : m("iframe", slide.embed            ),
+          !slide.bullets  ? "" : m("ul"    ,
+            slide.bullets.map( function(bullet) { return m("li", bullet) } )
+          )
         ])
       ]),
     ];
   };
-
   //initialize
   document.body = document.createElement("body");
   m.module(document.body, app);
