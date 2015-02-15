@@ -54,10 +54,15 @@
       if (!isInitialized) {
         window.onclick = play;
         window.onkeydown = function(e) {
-          if (e.keyCode == 13 || e.keyCode == 32) { play() }
+          if ([13, 32, 39, 40].indexOf(e.keyCode) > -1) {
+            play(e);
+          } else if ([8, 37, 38].indexOf(e.keyCode) > -1) {
+            play(e, true);
+          };
         };
 
-        function play() {
+        function play(event, reverse) {
+          event.preventDefault();
           m.startComputation();
 
           if (!document.webkitFullscreenElement) {
@@ -67,7 +72,7 @@
               element.webkitRequestFullScreen();
             };
           } else {
-            ctrl.rotate();
+            ctrl.rotate(reverse);
           };
 
           m.endComputation();
@@ -84,7 +89,13 @@
     var slides = app.SlideList();
     return {
       slide:  function() { return slides()[0] },
-      rotate: function() { slides().push(slides().shift()) }
+      rotate: function(reverse) {
+        if (reverse) {
+          slides().unshift(slides().pop());
+        } else {
+          slides().push(slides().shift());
+        }
+      }
     };
   };
   //view
