@@ -167,7 +167,7 @@
   location.controller = function() {
     var ctrl;
     ctrl = {
-      url: m.prop("http://robertheaton.com/2014/12/08/fun-with-your-friends-facebook-and-tinder-session-tokens/")
+      url: m.prop("http://engineering.flipboard.com/2015/02/mobile-web/")
     };
     return ctrl;
   };
