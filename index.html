@@ -53,6 +53,7 @@
     return function(element, isInitialized) {
       if (!isInitialized) {
         window.onclick = play;
+        window.oncontextmenu = function() { return false };
         window.onkeydown = function(e) {
           if ([13, 32, 39, 40].indexOf(e.keyCode) > -1) {
             play(e);
