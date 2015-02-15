@@ -52,20 +52,35 @@
   app.config = function(ctrl) {
     return function(element, isInitialized) {
       if (!isInitialized) {
-        window.onclick = play;
+        window.onclick = navigate;
+        window.onkeydown = navigate;
         window.oncontextmenu = function() { return false };
-        window.onkeydown = function(e) {
-          if ([13, 32, 39, 40].indexOf(e.keyCode) > -1) {
-            play(e);
-          } else if ([8, 37, 38].indexOf(e.keyCode) > -1) {
-            play(e, true);
+
+        function navigate(event) {
+          switch (event.keyCode) {
+            case 0:   //ContextMenu
+            case 13:  //Enter
+            case 32:  //Space
+            case 39:  //ArrowRight
+            case 40:  //ArrowDown
+              play();
+              break;
+            case 8:   //Backspace
+            case 37:  //ArrowLeft
+            case 38:  //ArrowUp
+              play(true);
+              break;
+            case 81:   //KeyQ
+            case 190:  //Period
+              document.webkitExitFullscreen();
+              break;
+            default:
+              return;
           };
+          return false;
         };
 
-        function play(event, reverse) {
-          event.preventDefault();
-          m.startComputation();
-
+        function play(reverse) {
           if (!document.webkitFullscreenElement) {
             element.webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT);
 
@@ -73,10 +88,10 @@
               element.webkitRequestFullScreen();
             };
           } else {
+            m.startComputation();
             ctrl.rotate(reverse);
+            m.endComputation();
           };
-
-          m.endComputation();
         };
       };
     };
