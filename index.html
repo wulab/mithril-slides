@@ -54,6 +54,7 @@
       if (!isInitialized) {
         window.onclick = navigate;
         window.onkeydown = navigate;
+        window.ontouchend = navigate;
         window.oncontextmenu = function() { return false };
 
         function navigate(event) {
@@ -80,7 +81,7 @@
         };
 
         function play(reverse) {
-          if (!document.webkitFullscreenElement) {
+          if (element.webkitRequestFullScreen && !document.webkitFullscreenElement) {
             element.webkitRequestFullScreen();
           } else {
             m.startComputation();
