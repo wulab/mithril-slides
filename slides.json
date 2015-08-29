@@ -1,179 +1,57 @@
 [
   {
-    "title": "Mithril.js",
-    "subtitle": "Weera Wu"
-  },
-
-  {
-    "title": "What is it?"
-  },
-
-  {
-    "subtitle": "Mithril is a client-side MVC framework.<br><br>A tool to organize code in a way that is easy to think about and to maintain."
-  },
-
-  {
-    "title": "Light-weight",
-    "bullets": [
-      "Only 5kb gzipped, no dependencies",
-      "Small API, small learning curve"
-    ]
-  },
-
-  {
-    "title": "Robust",
-    "bullets": [
-      "Safe-by-default templates",
-      "Hierarchical MVC via components"
-    ]
-  },
-
-  {
-    "title": "Fast",
-    "bullets": [
-      "Virtual DOM diffing and compilable templates",
-      "Intelligent auto-redrawing system"
-    ]
-  },
-
-  {
-    "title": "Sample code",
-    "codes": [
-      "//namespace",
-      "var app = {};",
-      "",
-      "//model",
-      "app.PageList = function() {",
-      "  return m.request({method: \"GET\", url: \"pages.json\"});",
-      "};"
-    ]
-  },
-
-  {
-    "codes": [
-      "//controller",
-      "app.controller = function() {",
-      "  var pages = app.PageList();",
-      "  return {",
-      "    pages: pages,",
-      "    rotate: function() {",
-      "      pages().push(pages().shift());",
-      "    }",
-      "  }",
-      "};"
-    ]
-  },
-
-  {
-    "codes": [
-      "//view",
-      "app.view = function(ctrl) {",
-      "  return [",
-      "    ctrl.pages().map(function(page) {",
-      "      return m(\"a\", {href: page.url}, page.title);",
-      "    }),",
-      "    m(\"button\", {onclick: ctrl.rotate}, \"Rotate links\")",
-      "  ];",
-      "};",
-      "",
-      "//initialize",
-      "m.module(document.getElementById(\"example\"), app);"
-    ]
-  },
-
-  {
-    "title": "What about performance?"
+    "title": "Lorem Ipsum Dolor",
+    "subtitle": "Duis aute irure"
   },
 
   {
     "image": {
-      "src": "assets/performance.png",
-      "width": "800"
-    }
+      "src": "http://placehold.it/770x578",
+      "width": "770"
+    },
+    "title": "Lorem Ipsum Dolor",
+    "subtitle": "Duis aute irure"
   },
 
   {
-    "title": "What can you do with it?"
+    "title": "Lorem Ipsum Dolor"
   },
 
   {
-    "title": "Demo 1",
-    "subtitle": "Todo App"
-  },
-
-  {
-    "embed": {
-      "src": "assets/codepen_empmYY/index.html",
-      "width": "889",
-      "height": "667",
-      "frameborder": "0"
-    }
-  },
-
-  {
-    "title": "Demo 2",
-    "subtitle": "Search App"
-  },
-
-  {
-    "embed": {
-      "src": "assets/codepen_ByoNXp/index.html",
-      "width": "889",
-      "height": "667",
-      "frameborder": "0"
-    }
-  },
-
-  {
-    "title": "Demo 3",
-    "subtitle": "Reader App"
-  },
-
-  {
-    "embed": {
-      "src": "assets/codepen_vEKWKv/index.html",
-      "width": "375",
-      "height": "667",
-      "frameborder": "0"
-    }
-  },
-
-  {
-    "title": "Demo 4",
-    "subtitle": "Presentation App"
-  },
-
-  {
-    "title": ";-)",
-    "subtitle": "You have already seen it"
-  },
-
-  {
-    "title": "▲",
-    "subtitle": "These slides are inside Mithril!"
-  },
-
-  {
-    "codes": [
-      "{",
-      "  \"title\": \"Demo 4\",",
-      "  \"subtitle\": \"Presentation App\"",
-      "},",
-      "",
-      "{",
-      "  \"title\": \";-)\",",
-      "  \"subtitle\": \"You have already seen it\"",
-      "},",
-      "",
-      "{",
-      "  \"title\": \"▲\",",
-      "  \"subtitle\": \"These slides are inside Mithril!\"",
-      "},"
+    "title": "Lorem Ipsum Dolor",
+    "bullets": [
+      "Consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua",
+      "Ut enim ad minim veniam",
+      "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur"
     ]
   },
 
   {
-    "title": "Thank you!",
-    "subtitle": "Sources are available at<br><br>http://codepen.io/wulab"
+    "bullets": [
+      "Consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua",
+      "Ut enim ad minim veniam",
+      "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur",
+      "Excepteur sint occaecat cupidatat"
+    ]
+  },
+
+  {
+    "image": {
+      "src": "http://placehold.it/1024x768",
+      "width": "1024"
+    }
+  },
+
+  {
+    "embed": {
+      "src": "http://en.wikipedia.org/wiki/Lorem_ipsum",
+      "width": "1024",
+      "height": "768",
+      "frameborder": "0"
+    }
+  },
+
+  {
+
   }
 ]

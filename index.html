@@ -1,5 +1,5 @@
 <!doctype html>
-<title>mithril.js</title>
+<title>mithril-slides</title>
 <style>
   html { cursor: none }
   body {
@@ -9,8 +9,8 @@
     -webkit-font-smoothing: antialiased;
     -webkit-user-select: none;
   }
-  h1, h2, h3 { text-align: center; font-weight: 100 }
-  h1 { font-size: 80pt; margin-bottom: 40pt }
+  h1, h2, h3 { margin: 0; text-align: center; font-weight: 100 }
+  h1 { font-size: 80pt }
   h2 { font-size: 40pt }
   h3 { font-size: 32pt }
   ul { -webkit-padding-start: 36pt; text-align: left }
@@ -59,16 +59,16 @@
 
         function navigate(event) {
           switch (event.keyCode) {
-            case 0:   //ContextMenu
-            case 13:  //Enter
-            case 32:  //Space
-            case 39:  //ArrowRight
-            case 40:  //ArrowDown
+            case 0:    //ContextMenu
+            case 13:   //Enter
+            case 32:   //Space
+            case 39:   //ArrowRight
+            case 40:   //ArrowDown
               play();
               break;
-            case 8:   //Backspace
-            case 37:  //ArrowLeft
-            case 38:  //ArrowUp
+            case 8:    //Backspace
+            case 37:   //ArrowLeft
+            case 38:   //ArrowUp
               play(true);
               break;
             case 190:  //Period
@@ -116,9 +116,9 @@
     return [
       m("div#slide", { config: app.config(ctrl) }, [
         m("div#objects", [
+          !slide.image    ? "" : m("img"   , slide.image            ),
           !slide.title    ? "" : m("h1"    , m.trust(slide.title)   ),
           !slide.subtitle ? "" : m("h3"    , m.trust(slide.subtitle)),
-          !slide.image    ? "" : m("img"   , slide.image            ),
           !slide.codes    ? "" : m("pre"   , slide.codes.join("\n") ),
           !slide.embed    ? "" : m("iframe", slide.embed            ),
           !slide.bullets  ? "" : m("ul"    ,
