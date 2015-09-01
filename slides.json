@@ -7,7 +7,8 @@
   {
     "image": {
       "src": "http://placehold.it/770x578",
-      "width": "770"
+      "width": "770",
+      "height": "578"
     },
     "title": "Lorem Ipsum Dolor",
     "subtitle": "Duis aute irure"
@@ -38,7 +39,8 @@
   {
     "image": {
       "src": "http://placehold.it/1024x768",
-      "width": "1024"
+      "width": "1024",
+      "height": "768"
     }
   },
 
