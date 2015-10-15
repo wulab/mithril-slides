@@ -99,7 +99,7 @@
             element.msRequestFullscreen();
           } else {
             m.startComputation();
-            ctrl.rotate(reverse);
+            ctrl.rotateSlide(reverse);
             m.endComputation();
           };
         };
@@ -119,8 +119,8 @@
   app.controller = function() {
     var slides = app.SlideList();
     return {
-      slide:  function() { return slides()[0] },
-      rotate: function(reverse) {
+      currentSlide: function() { return slides()[0] },
+      rotateSlide: function(reverse) {
         if (reverse) {
           slides().unshift( slides().pop() );
         } else {
@@ -131,7 +131,7 @@
   };
   //view
   app.view = function(ctrl) {
-    var slide = ctrl.slide();
+    var slide = ctrl.currentSlide();
     return [
       m("div#slide", { config: app.config(ctrl) }, [
         m("div#objects", [
