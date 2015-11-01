@@ -61,14 +61,14 @@
   app.config = function(ctrl) {
     return function(element, isInitialized) {
       if (!isInitialized) {
-        function forward() {
+        function forward(event) {
           play();
-          return false;
+          event.preventDefault();
         }
 
-        function backward() {
+        function backward(event) {
           play(true);
-          return false;
+          event.preventDefault();
         }
 
         function navigate(event) {
@@ -96,7 +96,7 @@
             default:
               return;
           };
-          return false;
+          event.preventDefault();
         };
 
         function play(reverse) {
