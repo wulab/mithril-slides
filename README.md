@@ -24,7 +24,7 @@ Action | Shortcut
 ------ | --------
 Advance to the next slide | Right Arrow, Down Arrow, Space bar or Return
 Go to previous slide | Left Arrow, Up Arrow or Backspace
-Quit presentation mode | Period
+Quit presentation mode | Period or Escape
 
 ## License
 mithril-slides is released under the [MIT License](http://www.opensource.org/licenses/MIT)

@@ -61,9 +61,18 @@
   app.config = function(ctrl) {
     return function(element, isInitialized) {
       if (!isInitialized) {
+        function forward() {
+          play();
+          return false;
+        }
+
+        function backward() {
+          play(true);
+          return false;
+        }
+
         function navigate(event) {
           switch (event.keyCode) {
-            case 0:    //ContextMenu
             case 13:   //Enter
             case 32:   //Space
             case 39:   //ArrowRight
@@ -104,10 +113,10 @@
           };
         };
 
-        window.onclick       = navigate;
+        window.onclick       = forward;
+        window.ontouchend    = forward;
+        window.oncontextmenu = backward;
         window.onkeydown     = navigate;
-        window.ontouchend    = navigate;
-        window.oncontextmenu = function() { return false };
       };
     };
   };
