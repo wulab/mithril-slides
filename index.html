@@ -65,12 +65,10 @@
           play();
           event.preventDefault();
         }
-
         function backward(event) {
           play(true);
           event.preventDefault();
         }
-
         function navigate(event) {
           switch (event.keyCode) {
             case 13:   //Enter
@@ -98,7 +96,6 @@
           };
           event.preventDefault();
         };
-
         function play(reverse) {
           if (element.webkitRequestFullScreen && !document.webkitFullscreenElement) {
             element.webkitRequestFullScreen();
