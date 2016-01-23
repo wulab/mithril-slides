@@ -1,7 +1,6 @@
 <!doctype html>
 <title>mithril-slides</title>
 <style>
-  html { cursor: none }
   body {
     margin: 0;
     background-color: #000;
@@ -79,6 +78,38 @@
           play(true);
           event.preventDefault();
         }
+        function showPointer() {
+          element.style.cursor = 'default';
+        }
+        function hidePointer() {
+          element.style.cursor = 'none';
+        }
+        function isPointerVisible() {
+          return element.style.cursor != 'none';
+        }
+        function requestFullscreen() {
+          if (element.webkitRequestFullScreen) {
+            element.webkitRequestFullScreen();
+          } else if (element.mozRequestFullScreen) {
+            element.mozRequestFullScreen();
+          } else if (element.msRequestFullscreen) {
+            element.msRequestFullscreen();
+          }
+          hidePointer();
+        }
+        function exitFullscreen() {
+          if (document.webkitExitFullscreen) {
+            document.webkitExitFullscreen();
+          } else if (document.mozCancelFullScreen) {
+            document.mozCancelFullScreen();
+          } else if (document.msExitFullscreen) {
+            document.msExitFullscreen();
+          }
+          showPointer();
+        }
+        function hasFullScreenElement() {
+          return !( !document.webkitFullscreenElement && !document.mozFullScreenElement && !document.msFullscreenElement );
+        }
         function navigate(event) {
           switch (event.keyCode) {
             case 13:   //Enter
@@ -92,39 +123,36 @@
             case 38:   //ArrowUp
               play(true);
               break;
-            case 190:  //Period
-              if (document.webkitExitFullscreen) {
-                document.webkitExitFullscreen();
-              } else if (document.mozCancelFullScreen) {
-                document.mozCancelFullScreen();
-              } else if (document.msExitFullscreen) {
-                document.msExitFullscreen();
+            case 67:   //KeyC
+              if ( isPointerVisible() ) {
+                hidePointer();
+              } else {
+                showPointer();
               }
+              break;
+            case 190:  //Period
+              exitFullscreen();
               break;
             default:
               return;
-          };
+          }
           event.preventDefault();
-        };
+        }
         function play(reverse) {
-          if (element.webkitRequestFullScreen && !document.webkitFullscreenElement) {
-            element.webkitRequestFullScreen();
-          } else if (element.mozRequestFullScreen && !document.mozFullScreenElement) {
-            element.mozRequestFullScreen();
-          } else if (element.msRequestFullscreen && !document.msFullscreenElement) {
-            element.msRequestFullscreen();
+          if ( !hasFullScreenElement() ) {
+            requestFullscreen();
           } else {
             m.startComputation();
             ctrl.rotateSlide(reverse);
             m.endComputation();
-          };
-        };
+          }
+        }
 
         window.onclick       = forward;
         window.ontouchend    = forward;
         window.oncontextmenu = backward;
         window.onkeydown     = navigate;
-      };
+      }
     };
   };
   //model
