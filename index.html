@@ -24,9 +24,9 @@
   #slide {
     position: absolute;
     top: 0;
-    right: 8%;
+    right: 0;
     bottom: 0;
-    left: 8%;
+    left: 0;
     overflow: hidden;
 
     background-color: #F07575;
@@ -42,8 +42,8 @@
   #objects {
     position: absolute;
     top: 50%;
-    right: 8%;
-    left: 8%;
+    right: 16%;
+    left: 16%;
     -webkit-transform: translate(0, -50%);
     -moz-transform: translate(0, -50%);
     -ms-transform: translate(0, -50%);
@@ -52,6 +52,16 @@
   }
   #objects > :first-child { margin-top: 0 }
   #objects > :last-child { margin-bottom: 0 }
+  @media (min-width: 1600px) {
+    #slide {
+      right: 8%;
+      left: 8%;
+    }
+    #objects {
+      right: 8%;
+      left: 8%;
+    }
+  }
 </style>
 <script src="//cdnjs.cloudflare.com/ajax/libs/mithril/0.2.0/mithril.js"></script>
 <script>
