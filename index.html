@@ -162,6 +162,14 @@
   //controller
   app.controller = function() {
     var slides = app.SlideList();
+    slides.then(function(slides) {
+      slides.forEach(function(slide) {
+        if (slide.image) {
+          var image = new Image();
+          image.src = slide.image.src;
+        }
+      });
+    });
     return {
       currentSlide: function() { return slides()[0] },
       rotateSlide: function(reverse) {
