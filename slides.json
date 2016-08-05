@@ -48,8 +48,7 @@
     "embed": {
       "src": "http://en.wikipedia.org/wiki/Lorem_ipsum",
       "width": "1024",
-      "height": "768",
-      "frameborder": "0"
+      "height": "768"
     }
   },
 
