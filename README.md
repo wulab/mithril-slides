@@ -1,7 +1,7 @@
 # mithril-slides
 A simple presentation app written with Mithril
 
-![screenshots](https://cloud.githubusercontent.com/assets/592709/17454100/41df4d70-5bb5-11e6-9f15-b3671636c115.gif)
+![screenshots](https://cloud.githubusercontent.com/assets/592709/17454537/012dc70c-5bc4-11e6-86e1-5d5ce2bc35b8.gif)
 
 ## Getting started
 1. Clone mithril-slides repository at the command prompt if you haven't yet:
