@@ -55,9 +55,8 @@
   {
     "embed": {
       "src": "https://player.vimeo.com/video/5799640",
-      "width": "640",
-      "height": "360",
-      "allowfullscreen": true
+      "width": "1024",
+      "height": "768"
     }
   },
 
