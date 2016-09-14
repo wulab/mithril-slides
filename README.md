@@ -27,6 +27,17 @@ Go to previous slide      | Left Arrow, Up Arrow or Backspace
 Quit presentation mode    | Period or Escape
 Show or hide the pointer  | C
 
+## Offline mode
+mithril-slides requires an internet connection to work. If you are to present in a
+place without one. You can still use mithril-slides by checking out `offline` branch
+before starting a web server:
+
+        $ git checkout offline
+        $ python -m SimpleHTTPServer 8000
+
+You also need to change src properties of all image and embed objects in your
+`slides.json` file to local files.
+
 ## Known issues
 Some websites can not be embedded because they have secure HTTP headers (either
 `X-Frame-Options` or `Content-Security-Policy`) set in their responses. To remove
