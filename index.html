@@ -53,17 +53,10 @@
   #objects > :first-child { margin-top: 0 }
   #objects > :last-child { margin-bottom: 0 }
   @media (min-width: 1600px) {
-    #slide {
-      right: 8%;
-      left: 8%;
-    }
-    #objects {
-      right: 8%;
-      left: 8%;
-    }
+    #slide, #objects { right: 8%; left: 8% }
   }
 </style>
-<script src="//cdnjs.cloudflare.com/ajax/libs/mithril/0.2.5/mithril.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/mithril/0.2.5/mithril.js"></script>
 <script>
   //namespace
   var app = {};
