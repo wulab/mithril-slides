@@ -46,14 +46,14 @@ those headers, you need a browser extension. For Google Chrome, install
 values. For Firefox, install [Modify Response Headers][2] add-on and add filters for
 those headers. The following slide can be used to test your setup:
 
-    {
-        "embed": {
-            "src": "https://github.com/",
-            "width": "1024",
-            "height": "768",
-            "sandbox": "allow-forms allow-same-origin allow-scripts"
+        {
+            "embed": {
+                "src": "https://github.com/",
+                "width": "1024",
+                "height": "768",
+                "sandbox": "allow-forms allow-same-origin allow-scripts"
+            }
         }
-    }
 
 [1]: https://chrome.google.com/webstore/detail/modheader/idgpnmonknjnojddfkpgkljpfnnfcklj
 [2]: https://addons.mozilla.org/en-US/firefox/addon/modify-response-headers/
