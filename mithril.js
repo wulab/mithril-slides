@@ -1,7 +1,18 @@
+/* global Promise */
+
 ;(function (global, factory) { // eslint-disable-line
 	"use strict"
 	/* eslint-disable no-undef */
 	var m = factory(global)
+	/*	Set dependencies when no window for isomorphic compatibility */
+	if(typeof window === "undefined") {
+		m.deps({
+			document: typeof document !== "undefined" ? document : {},
+			location: typeof location !== "undefined" ? location : {},
+			clearTimeout: clearTimeout,
+			setTimeout: setTimeout
+		})
+	}
 	if (typeof module === "object" && module != null && module.exports) {
 		module.exports = m
 	} else if (typeof define === "function" && define.amd) {
@@ -10,11 +21,11 @@
 		global.m = m
 	}
 	/* eslint-enable no-undef */
-})(typeof window !== "undefined" ? window : this, function (global, undefined) { // eslint-disable-line
+})(typeof window !== "undefined" ? window : this, function factory(global, undefined) { // eslint-disable-line
 	"use strict"
 
 	m.version = function () {
-		return "v0.2.5"
+		return "v0.2.8"
 	}
 
 	var hasOwn = {}.hasOwnProperty
@@ -74,6 +85,8 @@
 		return global
 	}
 
+	m.deps.factory = m.factory = factory
+
 	m.deps(global)
 
 	/**
@@ -84,7 +97,9 @@
 
 	function parseTagAttrs(cell, tag) {
 		var classes = []
-		var parser = /(?:(^|#|\.)([^#\.\[\]]+))|(\[.+?\])/g
+		/* eslint-disable max-len */
+		var parser = /(?:(^|#|\.)([^#\.\[\]]+))|(\[(.+?)(?:\s*=\s*("|'|)((?:\\["'\]]|.)*?)\5)?\])/g
+		/* eslint-enable max-len */
 		var match
 
 		while ((match = parser.exec(tag))) {
@@ -94,9 +109,11 @@
 				cell.attrs.id = match[2]
 			} else if (match[1] === ".") {
 				classes.push(match[2])
-			} else if (match[3][0] === "[") {
-				var pair = /\[(.+?)(?:=("|'|)(.*?)\2)?\]/.exec(match[3])
-				cell.attrs[pair[1]] = pair[3] || ""
+			} else if (match[3].charAt(0) === "[") { // #1195
+				var attrValue = match[6]
+				if (attrValue) attrValue = attrValue.replace(/\\(["'])/g, "$1")
+				if (match[4] === "class") classes.push(attrValue)
+				else cell.attrs[match[4]] = attrValue || true
 			}
 		}
 
@@ -147,7 +164,7 @@
 			args[i - 1] = arguments[i]
 		}
 
-		if (isObject(tag)) return parameterize(tag, args)
+		if (tag && isFunction(tag.view)) return parameterize(tag, args)
 
 		if (!isString(tag)) {
 			throw new Error("selector in m(selector, attrs, children) should " +
@@ -187,7 +204,9 @@
 		// value of Console.log in some versions of Firefox (behavior depends on
 		// version)
 		try {
-			if (data != null && data.toString() != null) return data
+			if (typeof data !== "boolean" &&
+					data != null &&
+					data.toString() != null) return data
 		} catch (e) {
 			// silently ignore errors
 		}
@@ -410,7 +429,7 @@
 
 				if (pendingRequests && controller.onunload) {
 					var onunload = controller.onunload
-					controller.onunload = noop
+					controller.onunload = function (){}
 					controller.onunload.$old = onunload
 				}
 			})
@@ -505,7 +524,8 @@
 		parentTag
 	) {
 		var nodes = cached.nodes
-		if (!editable || editable !== $document.activeElement) {
+		if (!editable || editable !== $document.activeElement ||
+				data !== cached) {
 			if (data.$trusted) {
 				clear(nodes, cached)
 				nodes = injectHTML(parentElement, index, data)
@@ -515,6 +535,7 @@
 			} else if (editable) {
 				// contenteditable nodes use `innerHTML` instead of `nodeValue`.
 				editable.innerHTML = data
+				nodes = [].slice.call(editable.childNodes)
 			} else {
 				// was a trusted string
 				if (nodes[0].nodeType === 1 || nodes.length > 1 ||
@@ -529,6 +550,7 @@
 		}
 		cached = new data.constructor(data)
 		cached.nodes = nodes
+		cached.$trusted = data.$trusted
 		return cached
 	}
 
@@ -555,10 +577,7 @@
 		if (item.$trusted) {
 			// fix offset of next element if item was a trusted string w/ more
 			// than one html element
-			// the first clause in the regexp matches elements
-			// the second clause (after the pipe) matches text nodes
-			var match = item.match(/<[^\/]|\>\s*[^<]/g)
-			if (match != null) return match.length
+			return item.nodes.length
 		} else if (isArray(item)) {
 			return item.length
 		}
@@ -726,13 +745,6 @@
 			cached.children.nodes = []
 		}
 
-		// edge case: setting value on <select> doesn't work before children
-		// exist, so set it again after children have been created
-		if (data.tag === "select" && "value" in data.attrs) {
-			setAttributes(node, data.tag, {value: data.attrs.value}, {},
-				namespace)
-		}
-
 		return cached
 	}
 
@@ -887,6 +899,13 @@
 				controllers)
 		}
 
+		// edge case: setting value on <select> doesn't work before children
+		// exist, so set it again after children have been created/updated
+		if (data.tag === "select" && "value" in data.attrs) {
+			setAttributes(node, data.tag, {value: data.attrs.value}, {},
+				namespace)
+		}
+
 		if (!isNew && shouldReattach === true && node != null) {
 			insertNode(parentElement, node, index)
 		}
@@ -1006,6 +1025,10 @@
 	}
 
 	function copyStyleAttrs(node, dataAttr, cachedAttr) {
+		if (cachedAttr === dataAttr) {
+			node.style = ""
+			cachedAttr = {}
+		}
 		for (var rule in dataAttr) {
 			if (hasOwn.call(dataAttr, rule)) {
 				if (cachedAttr == null || cachedAttr[rule] !== dataAttr[rule]) {
@@ -1070,15 +1093,26 @@
 			//
 			// #348 don't set the value if not needed - otherwise, cursor
 			// placement breaks in Chrome
+			// #1252 likewise when `contenteditable` is set on an element.
 			try {
-				if (tag !== "input" || node[attrName] !== dataAttr) {
+				if (
+					tag !== "input" && !node.isContentEditable ||
+					node[attrName] != dataAttr // eslint-disable-line eqeqeq
+				) {
 					node[attrName] = dataAttr
 				}
 			} catch (e) {
 				node.setAttribute(attrName, dataAttr)
 			}
+		} else {
+			try {
+				node.setAttribute(attrName, dataAttr)
+			} catch (e) {
+				// IE8 doesn't allow change input attributes and throws
+				// an exception. Unfortunately it cannot be handled, because
+				// error code is not informative.
+			}
 		}
-		else node.setAttribute(attrName, dataAttr)
 	}
 
 	function trySetAttr(
@@ -1090,7 +1124,10 @@
 		tag,
 		namespace
 	) {
-		if (!(attrName in cachedAttrs) || (cachedAttr !== dataAttr) || ($document.activeElement === node)) {
+		if (!(attrName in cachedAttrs) ||
+				(cachedAttr !== dataAttr) ||
+				typeof dataAttr === "object" ||
+				($document.activeElement === node)) {
 			cachedAttrs[attrName] = dataAttr
 			try {
 				return setSingleAttr(
@@ -1106,8 +1143,11 @@
 				if (e.message.indexOf("Invalid argument") < 0) throw e
 			}
 		} else if (attrName === "value" && tag === "input" &&
-				node.value !== dataAttr) {
-			// #348 dataAttr may not be a string, so use loose comparison
+								/* eslint-disable eqeqeq */
+								node.value != dataAttr) {
+								// #348 dataAttr may not be a string,
+								// so use loose comparison
+								/* eslint-enable eqeqeq */
 			node.value = dataAttr
 		}
 	}
@@ -1331,6 +1371,7 @@
 		}
 
 		prop.toJSON = function () {
+			if (store && isFunction(store.toJSON)) return store.toJSON()
 			return store
 		}
 
@@ -1338,7 +1379,9 @@
 	}
 
 	m.prop = function (store) {
-		if ((store != null && (isObject(store) || isFunction(store)) || ((typeof Promise !== "undefined") && (store instanceof Promise))) &&
+		if ((store != null && (isObject(store) || isFunction(store)) ||
+					((typeof Promise !== "undefined") &&
+						(store instanceof Promise))) &&
 				isFunction(store.then)) {
 			return propify(store)
 		}
@@ -1392,6 +1435,8 @@
 		return parameterize(component, args)
 	}
 
+	var currentRoute, previousRoute
+
 	function checkPrevented(component, root, index, isPrevented) {
 		if (!isPrevented) {
 			m.redraw.strategy("all")
@@ -1420,15 +1465,21 @@
 				removeRootElement(root, index)
 			}
 			return controllers[index]
-		} else if (component == null) {
-			removeRootElement(root, index)
+		} else {
+			if (component == null) {
+				removeRootElement(root, index)
+			}
+
+			if (previousRoute) {
+				currentRoute = previousRoute
+			}
 		}
 	}
 
 	m.mount = m.module = function (root, component) {
 		if (!root) {
-			throw new Error("Please ensure the DOM element exists before " +
-				"rendering a template into it.")
+			throw new Error("Ensure the DOM element being passed to " +
+				"m.route/m.mount/m.render is not undefined.")
 		}
 
 		var index = roots.indexOf(root)
@@ -1468,6 +1519,7 @@
 		components.splice(index, 1)
 		reset(root)
 		nodeCache.splice(getCellCacheKey(root), 1)
+		unloaders = []
 	}
 
 	var redrawing = false
@@ -1554,7 +1606,7 @@
 	var modes = {pathname: "", hash: "#", search: "?"}
 	var redirect = noop
 	var isDefaultRoute = false
-	var routeParams, currentRoute
+	var routeParams
 
 	m.route = function (root, arg1, arg2, vdom) { // eslint-disable-line
 		// m.route()
@@ -1607,7 +1659,7 @@
 		}
 		// m.route(route, params, shouldReplaceHistoryEntry)
 		if (isString(root)) {
-			var oldRoute = currentRoute
+			previousRoute = currentRoute
 			currentRoute = root
 
 			var args = arg1 || {}
@@ -1643,7 +1695,7 @@
 
 			var replaceHistory =
 				(arguments.length === 3 ? arg2 : arg1) === true ||
-				oldRoute === root
+				previousRoute === currentRoute
 
 			if (global.history.pushState) {
 				var method = replaceHistory ? "replaceState" : "pushState"
@@ -1665,6 +1717,8 @@
 				$location[m.route.mode] = currentRoute
 				redirect(modes[m.route.mode] + currentRoute)
 			}
+
+			previousRoute = null
 		}
 	}
 
@@ -1823,8 +1877,7 @@
 			if (params[key] != null) {
 				if (!isArray(params[key])) params[key] = [params[key]]
 				params[key].push(value)
-			}
-			else params[key] = value
+			} else params[key] = value
 		})
 
 		return params
@@ -1852,7 +1905,7 @@
 			return propify(promise.then(resolve, reject), initialValue)
 		}
 
-		prop.catch = prop.then.bind(null, null)
+		prop["catch"] = prop.then.bind(null, null)
 		return prop
 	}
 	// Promiz.mithril.js | Zolmeister | MIT
@@ -2113,6 +2166,14 @@
 
 		if (options.deserialize === JSON.parse) {
 			xhr.setRequestHeader("Accept", "application/json, text/*")
+		}
+
+		if (isObject(options.headers)) {
+			for (var header in options.headers) {
+				if (hasOwn.call(options.headers, header)) {
+					xhr.setRequestHeader(header, options.headers[header])
+				}
+			}
 		}
 
 		if (isFunction(options.config)) {
