@@ -6,7 +6,7 @@
 
   {
     "image": {
-      "src": "http://placehold.it/770x578",
+      "src": "assets/770x578.png",
       "width": "770",
       "height": "578"
     },
@@ -38,7 +38,7 @@
 
   {
     "image": {
-      "src": "http://placehold.it/1024x768",
+      "src": "assets/1024x768.png",
       "width": "1024",
       "height": "768"
     }
@@ -46,17 +46,17 @@
 
   {
     "embed": {
-      "src": "http://en.wikipedia.org/wiki/Lorem_ipsum",
+      "src": "assets/lorem_ipsum.html",
       "width": "1024",
       "height": "768"
     }
   },
 
   {
-    "embed": {
-      "src": "https://player.vimeo.com/video/5799640",
-      "width": "1024",
-      "height": "768"
+    "image": {
+      "src": "assets/lorem_ipsum.gif",
+      "width": "800",
+      "height": "600"
     }
   },
 
