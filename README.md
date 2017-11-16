@@ -11,7 +11,8 @@ A simple presentation app written with Mithril
 2. Change directory to `mithril-slides` and start a web server:
 
         $ cd mithril-slides
-        $ python -m SimpleHTTPServer 8000
+        $ python -m SimpleHTTPServer 8000       # Python 2
+        $ python -m http.server 8000            # Python 3
 
 3. Using a browser, go to `http://localhost:8000` and you'll see example slides.
 
@@ -33,7 +34,8 @@ place without one. You can still use mithril-slides by checking out `offline` br
 before starting a web server:
 
         $ git checkout offline
-        $ python -m SimpleHTTPServer 8000
+        $ python -m SimpleHTTPServer 8000       # Python 2
+        $ python -m http.server 8000            # Python 3
 
 You also need to change src properties of all image and embed objects in your
 `slides.json` file to local files.
