@@ -1,7 +1,16 @@
 # mithril-slides
-A simple presentation app written with Mithril
+A Keynote-inspired presentation app written with Mithril
 
 ![screenshots](https://cloud.githubusercontent.com/assets/592709/17454537/012dc70c-5bc4-11e6-86e1-5d5ce2bc35b8.gif)
+
+## Features
+* Present with your browser – no installation needed
+* Embed any website or YouTube video into your slides
+* A total of 4 themes to choose from
+* Entire app in a single file
+* Your slides can be hosted on the internet
+
+![themes](https://user-images.githubusercontent.com/592709/32935441-ca343d1c-cba2-11e7-8ca3-ecd3af9ea46c.png)
 
 ## Getting started
 1. Clone mithril-slides repository at the command prompt if you haven't yet:
@@ -27,6 +36,7 @@ Advance to the next slide | Right Arrow, Down Arrow, Space bar or Return
 Go to previous slide      | Left Arrow, Up Arrow or Backspace
 Quit presentation mode    | Period or Escape
 Show or hide the pointer  | C
+Change presentation theme | T
 
 ## Offline mode
 mithril-slides requires an internet connection to work. If you are to present in a
