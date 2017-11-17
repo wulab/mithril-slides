@@ -1,18 +1,21 @@
 <!doctype html>
 <title>mithril-slides</title>
 <style>
+  /* base */
   body {
     margin: 0;
     background-color: #000;
+    font-family: "Helvetica Neue", "Helvetica", "Arial", sans-serif;
+    font-size: 38pt;
     text-rendering: optimizeLegibility;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
     -moz-font-feature-settings: 'liga', 'kern';
-    -webkit-user-select: none;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-font-smoothing: antialiased;
     -moz-user-select: none;
     -ms-user-select: none;
+    -webkit-user-select: none;
   }
-  h1, h2, h3 { text-align: center; font-weight: 100 }
+  h1, h2, h3 { text-align: center; font-weight: 400 }
   h1, h2, h3, img { margin: 0 0 24pt 0 }
   h1 { font-size: 80pt }
   h2 { font-size: 40pt }
@@ -21,9 +24,13 @@
   li { margin-bottom: 42pt }
   pre { font-size: 24pt; text-align: left; line-height: 1.4 }
   iframe {
-    border: 1px solid #ddd;
-    background: no-repeat center/8% url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzgiIGhlaWdodD0iMzgiIHZpZXdCb3g9IjAgMCAzOCAzOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiBzdHJva2U9IiNmZmYiPjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDEgMSkiIHN0cm9rZS13aWR0aD0iMiIgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48Y2lyY2xlIHN0cm9rZS1vcGFjaXR5PSIuNSIgY3g9IjE4IiBjeT0iMTgiIHI9IjE4Ii8+PHBhdGggZD0iTTM2IDE4YzAtOS45NC04LjA2LTE4LTE4LTE4Ij48YW5pbWF0ZVRyYW5zZm9ybSBhdHRyaWJ1dGVOYW1lPSJ0cmFuc2Zvcm0iIHR5cGU9InJvdGF0ZSIgZnJvbT0iMCAxOCAxOCIgdG89IjM2MCAxOCAxOCIgZHVyPSIxcyIgcmVwZWF0Q291bnQ9ImluZGVmaW5pdGUiLz48L3BhdGg+PC9nPjwvc3ZnPg==");
+    border: 1px solid #aaa;
+    background-image: url("data:image/svg+xml;base64,PCEtLSBCeSBTYW0gSGVyYmVydCAoQHNoZXJiKSwgZm9yIGV2ZXJ5b25lLiBNb3JlIEAgaHR0cDovL2dvby5nbC83QUp6YkwgLS0+Cjxzdmcgd2lkdGg9IjM4IiBoZWlnaHQ9IjM4IiB2aWV3Qm94PSIwIDAgMzggMzgiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjYWFhIj4KICAgIDxnIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+CiAgICAgICAgPGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMSAxKSIgc3Ryb2tlLXdpZHRoPSIyIj4KICAgICAgICAgICAgPGNpcmNsZSBzdHJva2Utb3BhY2l0eT0iLjUiIGN4PSIxOCIgY3k9IjE4IiByPSIxOCIvPgogICAgICAgICAgICA8cGF0aCBkPSJNMzYgMThjMC05Ljk0LTguMDYtMTgtMTgtMTgiPgogICAgICAgICAgICAgICAgPGFuaW1hdGVUcmFuc2Zvcm0KICAgICAgICAgICAgICAgICAgICBhdHRyaWJ1dGVOYW1lPSJ0cmFuc2Zvcm0iCiAgICAgICAgICAgICAgICAgICAgdHlwZT0icm90YXRlIgogICAgICAgICAgICAgICAgICAgIGZyb209IjAgMTggMTgiCiAgICAgICAgICAgICAgICAgICAgdG89IjM2MCAxOCAxOCIKICAgICAgICAgICAgICAgICAgICBkdXI9IjFzIgogICAgICAgICAgICAgICAgICAgIHJlcGVhdENvdW50PSJpbmRlZmluaXRlIi8+CiAgICAgICAgICAgIDwvcGF0aD4KICAgICAgICA8L2c+CiAgICA8L2c+Cjwvc3ZnPg==");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 8%;
   }
+  /* layout */
   #slide {
     position: absolute;
     top: 0;
@@ -31,14 +38,6 @@
     bottom: 0;
     left: 0;
     overflow: hidden;
-    background-color: #F07575;
-    background-image: -webkit-linear-gradient(top, #020202, #261c40 50%, #6e687f);
-    background-image: -moz-linear-gradient(top, #020202, #261c40 50%, #6e687f);
-    background-image: -ms-linear-gradient(top, #020202, #261c40 50%, #6e687f);
-    color: #fff;
-    font-family: helvetica, sans-serif;
-    font-size: 38pt;
-    font-weight: 200;
   }
   #objects {
     position: absolute;
@@ -55,6 +54,42 @@
   @media (min-width: 1600px) {
     #slide, #objects { right: 8%; left: 8% }
   }
+  /* theme */
+  .white {
+    background-color: #fff;
+    color: #000;
+    font-weight: 400;
+  }
+  .white h1, .white h2 { font-weight: 500 }
+  .black {
+    background-color: #000;
+    color: #fff;
+    font-weight: 400;
+  }
+  .black h1, .black h2 { font-weight: 500 }
+  .gradient {
+    background-color: #f07575;
+    background-image: -webkit-linear-gradient(top, #020202, #261c40 50%, #6e687f);
+    background-image: -moz-linear-gradient(top, #020202, #261c40 50%, #6e687f);
+    background-image: -ms-linear-gradient(top, #020202, #261c40 50%, #6e687f);
+    color: #fff;
+    font-weight: 300;
+  }
+  .gradient h1, .gradient h2, .gradient h3 { font-weight: 300 }
+  .showroom {
+    background-color: #caced2;
+    background-image: -webkit-radial-gradient(center bottom, ellipse farthest-corner, #f4f4f8 50%, #caced2 100%);
+    background-image: -moz-radial-gradient(center bottom, ellipse farthest-corner, #f4f4f8 50%, #caced2 100%);
+    background-image: -ms-radial-gradient(center bottom, ellipse farthest-corner, #f4f4f8 50%, #caced2 100%);
+    color: #535353;
+    font-family: "Gill Sans", "Gill Sans MT", "Calibri", sans-serif;
+    font-size: 46pt;
+    font-weight: 300;
+  }
+  .showroom h1, .showroom h2, .showroom h3 { font-weight: 300 }
+  .showroom h1 { font-size: 72pt; text-transform: uppercase }
+  .showroom h2 { font-size: 46pt }
+  .showroom h3 { font-size: 38pt }
 </style>
 <script src="mithril.js"></script>
 <script>
@@ -62,6 +97,7 @@
   var app = {};
   //config
   app.config = function(ctrl) {
+    var THEMES = ['black', 'white', 'gradient', 'showroom'];
     return function(element, isInitialized) {
       if (!isInitialized) {
         function forward(event) {
@@ -104,6 +140,11 @@
         function hasFullScreenElement() {
           return !( !document.webkitFullscreenElement && !document.mozFullScreenElement && !document.msFullscreenElement );
         }
+        function changeTheme() {
+          var currentIndex  = THEMES.indexOf(element.className);
+          var nextIndex     = (currentIndex + 1) % THEMES.length;
+          element.className = THEMES[nextIndex];
+        }
         function navigate(event) {
           switch (event.keyCode) {
             case 13:   //Enter
@@ -123,6 +164,9 @@
               } else {
                 showPointer();
               }
+              break;
+            case 84:   //KeyT
+              changeTheme();
               break;
             case 190:  //Period
               exitFullscreen();
@@ -178,7 +222,7 @@
   app.view = function(ctrl) {
     var slide = ctrl.currentSlide();
     return [
-      m("div#slide", { config: app.config(ctrl) }, [
+      m("div#slide.gradient", { config: app.config(ctrl) }, [
         m("div#objects", [
           !slide.image    ? "" : m("img"   , slide.image            ),
           !slide.title    ? "" : m("h1"    , m.trust(slide.title)   ),
