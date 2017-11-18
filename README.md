@@ -10,7 +10,7 @@ A Keynote-inspired presentation app written with Mithril
 * Entire app in a single file
 * Your slides can be hosted on the internet
 
-![themes](https://user-images.githubusercontent.com/592709/32935441-ca343d1c-cba2-11e7-8ca3-ecd3af9ea46c.png)
+![themes](https://user-images.githubusercontent.com/592709/32982023-6333a648-ccb0-11e7-87e6-cdb94c5573f0.png)
 
 ## Getting started
 1. Clone mithril-slides repository at the command prompt if you haven't yet:
