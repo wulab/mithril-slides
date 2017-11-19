@@ -234,6 +234,9 @@
   app.controller = function() {
     var slides = app.SlideList();
     slides.then(function(slides) {
+      if (slides[0].title) {
+        document.title = slides[0].title;
+      }
       slides.forEach(function(slide) {
         if (slide.image) {
           var image = new Image();
