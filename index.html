@@ -5,9 +5,9 @@
   /* base */
   html { font-size: 5px }
   @media (min-width: 600px) { html { font-size: 6px } }
-  @media (min-width: 800px) { html { font-size: 8px } }
-  @media (min-width: 1200px) { html { font-size: 10px } }
-  @media (min-width: 1600px) { html { font-size: 14px } }
+  @media (min-width: 800px) { html { font-size: 10px } }
+  @media (min-width: 1200px) { html { font-size: 11px } }
+  @media (min-width: 1600px) { html { font-size: 15px } }
   body {
     margin: 0;
     background-color: #000;
@@ -23,7 +23,7 @@
   h1, h2, img { margin: 0 0 2.4rem 0 }
   h1, h2 { text-align: center; line-height: 1 }
   ul, pre { text-align: left }
-  ul { line-height: 1; -moz-padding-start: 3.6rem; -webkit-padding-start: 3.6rem }
+  ul { line-height: 1.2; -moz-padding-start: 3.6rem; -webkit-padding-start: 3.6rem }
   li + li { margin-top: 4.2rem }
   pre {
     font-family: "Source Code Pro", monospace;
@@ -51,8 +51,8 @@
   #objects {
     position: absolute;
     top: 50%;
-    right: 16%;
-    left: 16%;
+    right: 8%;
+    left: 8%;
     -webkit-transform: translate(0, -50%);
     -moz-transform: translate(0, -50%);
     -ms-transform: translate(0, -50%);
@@ -60,8 +60,11 @@
   }
   #objects > :first-child { margin-top: 0 }
   #objects > :last-child { margin-bottom: 0 }
+  @media (min-width: 1200px) {
+    #objects { right: 16%; left: 16% }
+  }
   @media (min-width: 1600px) {
-    #slide, #objects { right: 8%; left: 8% }
+    #slide { right: 8%; left: 8% }
   }
   /* theme */
   .black {
@@ -104,7 +107,7 @@
   }
   .showroom h1 { font-size: 7.2rem; font-weight: 300; text-transform: uppercase }
   .showroom h2 { font-size: 3.8rem; font-weight: 300 }
-  .showroom ul { font-size: 4.6rem; font-weight: 300; line-height: 1.2 }
+  .showroom ul { font-size: 4.6rem; font-weight: 300 }
   .showroom pre { font-size: 2.8rem }
   /* orientation */
   @media screen and (orientation: portrait) {
