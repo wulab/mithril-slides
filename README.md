@@ -4,13 +4,13 @@ A Keynote-inspired presentation app written with Mithril
 ![screenshots](https://cloud.githubusercontent.com/assets/592709/17454537/012dc70c-5bc4-11e6-86e1-5d5ce2bc35b8.gif)
 
 ## Features
-* Present with your browser – no installation needed
-* Embed any website or YouTube video into your slides
+* Present ideas with your browser
+* Embed any websites or YouTube videos into your slides
+* Support mobile and tablet devices
+* An entire app in a single file
 * A total of 4 themes to choose from
-* Entire app in a single file
-* Your slides can be hosted on the internet
 
-![themes](https://user-images.githubusercontent.com/592709/32935441-ca343d1c-cba2-11e7-8ca3-ecd3af9ea46c.png)
+![themes](https://user-images.githubusercontent.com/592709/32982023-6333a648-ccb0-11e7-87e6-cdb94c5573f0.png)
 
 ## Getting started
 1. Clone mithril-slides repository at the command prompt if you haven't yet:
