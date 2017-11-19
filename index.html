@@ -164,8 +164,15 @@
           }
           showPointer();
         }
+        function isFullScreenEnabled() {
+          return document.webkitFullscreenEnabled ||
+                 document.mozFullScreenEnabled ||
+                 document.msFullscreenEnabled;
+        }
         function hasFullScreenElement() {
-          return !( !document.webkitFullscreenElement && !document.mozFullScreenElement && !document.msFullscreenElement );
+          return !( !document.webkitFullscreenElement &&
+                    !document.mozFullScreenElement &&
+                    !document.msFullscreenElement );
         }
         function changeTheme() {
           var currentIndex  = THEMES.indexOf(element.className);
@@ -204,7 +211,7 @@
           event.preventDefault();
         }
         function play(reverse) {
-          if ( !hasFullScreenElement() ) {
+          if ( isFullScreenEnabled() && !hasFullScreenElement() ) {
             requestFullscreen();
           } else {
             m.startComputation();
