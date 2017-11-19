@@ -39,6 +39,7 @@
     background-repeat: no-repeat;
     background-size: 8%;
   }
+
   /* layout */
   #slide {
     position: absolute;
@@ -66,6 +67,7 @@
   @media (min-width: 1600px) {
     #slide { right: 8%; left: 8% }
   }
+
   /* theme */
   .black {
     background-color: #000;
@@ -109,6 +111,7 @@
   .showroom h2 { font-size: 3.8rem; font-weight: 300 }
   .showroom ul { font-size: 4.6rem; font-weight: 300 }
   .showroom pre { font-size: 2.8rem }
+
   /* orientation */
   @media screen and (orientation: portrait) {
     #slide {
@@ -125,6 +128,7 @@
 <script>
   //namespace
   var app = {};
+
   //config
   app.config = function(ctrl) {
     var THEMES = ['black', 'white', 'gradient', 'showroom'];
@@ -134,19 +138,24 @@
           play();
           event.preventDefault();
         }
+
         function backward(event) {
           play(true);
           event.preventDefault();
         }
+
         function showPointer() {
           element.style.cursor = 'default';
         }
+
         function hidePointer() {
           element.style.cursor = 'none';
         }
+
         function isPointerVisible() {
           return element.style.cursor != 'none';
         }
+
         function requestFullscreen() {
           if (element.webkitRequestFullScreen) {
             element.webkitRequestFullScreen();
@@ -157,6 +166,7 @@
           }
           hidePointer();
         }
+
         function exitFullscreen() {
           if (document.webkitExitFullscreen) {
             document.webkitExitFullscreen();
@@ -167,21 +177,25 @@
           }
           showPointer();
         }
+
         function isFullScreenEnabled() {
           return document.webkitFullscreenEnabled ||
                  document.mozFullScreenEnabled ||
                  document.msFullscreenEnabled;
         }
+
         function hasFullScreenElement() {
           return !( !document.webkitFullscreenElement &&
                     !document.mozFullScreenElement &&
                     !document.msFullscreenElement );
         }
+
         function changeTheme() {
           var currentIndex  = THEMES.indexOf(element.className);
           var nextIndex     = (currentIndex + 1) % THEMES.length;
           element.className = THEMES[nextIndex];
         }
+
         function navigate(event) {
           switch (event.keyCode) {
             case 13:   //Enter
@@ -213,6 +227,7 @@
           }
           event.preventDefault();
         }
+
         function play(reverse) {
           if ( isFullScreenEnabled() && !hasFullScreenElement() ) {
             requestFullscreen();
@@ -222,6 +237,7 @@
             m.endComputation();
           }
         }
+
         window.onclick       = forward;
         window.ontouchend    = forward;
         window.oncontextmenu = backward;
@@ -229,10 +245,12 @@
       }
     };
   };
+
   //model
   app.SlideList = function() {
     return m.request({ method: "GET", url: "slides.json" });
   };
+
   //controller
   app.controller = function() {
     var slides = app.SlideList();
@@ -258,6 +276,7 @@
       }
     };
   };
+
   //view
   app.view = function(ctrl) {
     var slide = ctrl.currentSlide();
@@ -276,6 +295,7 @@
       ]),
     ];
   };
+
   //initialize
   document.body = document.createElement("body");
   m.module(document.body, app);
