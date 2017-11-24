@@ -125,179 +125,107 @@
     #objects { display: none }
   }
 </style>
-<script src="//cdnjs.cloudflare.com/ajax/libs/mithril/0.2.8/mithril.js"></script>
+<script src="//unpkg.com/mithril"></script>
 <script>
-  //namespace
-  var app = {};
+  // setup
+  var THEMES = ['black', 'white', 'gradient', 'showroom'];
 
-  //config
-  app.config = function(ctrl) {
-    var THEMES = ['black', 'white', 'gradient', 'showroom'];
-    return function(element, isInitialized) {
-      if (!isInitialized) {
-        function forward(event) {
-          play();
-          event.preventDefault();
-        }
-
-        function backward(event) {
-          play(true);
-          event.preventDefault();
-        }
-
-        function showPointer() {
-          element.style.cursor = 'default';
-        }
-
-        function hidePointer() {
-          element.style.cursor = 'none';
-        }
-
-        function isPointerVisible() {
-          return element.style.cursor != 'none';
-        }
-
-        function requestFullscreen() {
-          if (element.webkitRequestFullScreen) {
-            element.webkitRequestFullScreen();
-          } else if (element.mozRequestFullScreen) {
-            element.mozRequestFullScreen();
-          } else if (element.msRequestFullscreen) {
-            element.msRequestFullscreen();
-          }
-          hidePointer();
-        }
-
-        function exitFullscreen() {
-          if (document.webkitExitFullscreen) {
-            document.webkitExitFullscreen();
-          } else if (document.mozCancelFullScreen) {
-            document.mozCancelFullScreen();
-          } else if (document.msExitFullscreen) {
-            document.msExitFullscreen();
-          }
-          showPointer();
-        }
-
-        function isFullScreenEnabled() {
-          return document.webkitFullscreenEnabled ||
-                 document.mozFullScreenEnabled ||
-                 document.msFullscreenEnabled;
-        }
-
-        function hasFullScreenElement() {
-          return !( !document.webkitFullscreenElement &&
-                    !document.mozFullScreenElement &&
-                    !document.msFullscreenElement );
-        }
-
-        function changeTheme() {
-          var currentIndex  = THEMES.indexOf(element.className);
-          var nextIndex     = (currentIndex + 1) % THEMES.length;
-          element.className = THEMES[nextIndex];
-        }
-
-        function navigate(event) {
-          switch (event.keyCode) {
-            case 13:   //Enter
-            case 32:   //Space
-            case 39:   //ArrowRight
-            case 40:   //ArrowDown
-              play();
-              break;
-            case 8:    //Backspace
-            case 37:   //ArrowLeft
-            case 38:   //ArrowUp
-              play(true);
-              break;
-            case 67:   //KeyC
-              if ( isPointerVisible() ) {
-                hidePointer();
-              } else {
-                showPointer();
-              }
-              break;
-            case 84:   //KeyT
-              changeTheme();
-              break;
-            case 190:  //Period
-              exitFullscreen();
-              break;
-            default:
-              return;
-          }
-          event.preventDefault();
-        }
-
-        function play(reverse) {
-          if ( isFullScreenEnabled() && !hasFullScreenElement() ) {
-            requestFullscreen();
-          } else {
-            m.startComputation();
-            ctrl.rotateSlide(reverse);
-            m.endComputation();
-          }
-        }
-
-        window.onclick       = forward;
-        window.ontouchend    = forward;
-        window.oncontextmenu = backward;
-        window.onkeydown     = navigate;
-      }
-    };
-  };
-
-  //model
-  app.SlideList = function() {
-    return m.request({ method: "GET", url: "slides.json" });
-  };
-
-  //controller
-  app.controller = function() {
-    var slides = app.SlideList();
-    slides.then(function(slides) {
-      if (slides[0].title) {
-        document.title = slides[0].title;
-      }
-      slides.forEach(function(slide) {
-        if (slide.image) {
-          var image = new Image();
-          image.src = slide.image.src;
-        }
-      });
-    });
-    return {
-      currentSlide: function() { return slides()[0] },
-      rotateSlide: function(reverse) {
-        if (reverse) {
-          slides().unshift( slides().pop() );
-        } else {
-          slides().push( slides().shift() );
-        }
-      }
-    };
-  };
-
-  //view
-  app.view = function(ctrl) {
-    var slide = ctrl.currentSlide();
-    return [
-      m("div#slide.gradient", { config: app.config(ctrl) }, [
-        m("div#objects", [
-          !slide.image    ? "" : m("img"   , slide.image            ),
-          !slide.title    ? "" : m("h1"    , m.trust(slide.title)   ),
-          !slide.subtitle ? "" : m("h2"    , m.trust(slide.subtitle)),
-          !slide.codes    ? "" : m("pre"   , slide.codes.join("\n") ),
-          !slide.embed    ? "" : m("iframe", slide.embed            ),
-          !slide.bullets  ? "" : m("ul"    ,
-            slide.bullets.map( function(bullet) { return m("li", bullet) } )
+  // component
+  var Slide = {
+    oncreate: function(vnode) {
+      document.oncontextmenu = vnode.attrs.oncontextmenu;
+    },
+    view: function(vnode) {
+      var data = vnode.attrs.data;
+      return m('#slide', {
+        class: THEMES[vnode.attrs.theme],
+        style: vnode.attrs.pointer ? 'cursor:default' : 'cursor:none',
+        onclick: vnode.attrs.onclick,
+        ontouchend: vnode.attrs.ontouchend
+      }, [
+        m('#objects', [
+          !data.image    ? '' : m('img'   , data.image            ),
+          !data.title    ? '' : m('h1'    , m.trust(data.title)   ),
+          !data.subtitle ? '' : m('h2'    , m.trust(data.subtitle)),
+          !data.codes    ? '' : m('pre'   , data.codes.join('\n') ),
+          !data.embed    ? '' : m('iframe', data.embed            ),
+          !data.bullets  ? '' : m('ul'    ,
+            data.bullets.map( function(bullet) { return m('li', bullet) } )
           )
         ])
-      ]),
-    ];
+      ]);
+    }
   };
 
-  //initialize
-  document.body = document.createElement("body");
-  m.module(document.body, app);
+  var Presentation = {
+    data: [],
+    error: '',
+    index: 0,
+    pointer: true,
+    theme: 2,
+    setData: function(value) {
+      if (Array.isArray(value)) {
+        this.data = value;
+      }
+    },
+    setError: function(value) {
+      if (typeof(value) === 'string') {
+        this.error = value;
+      }
+    },
+    setIndex: function(value) {
+      if (value >= 0 && value < this.data.length) {
+        this.index = value;
+      }
+    },
+    togglePointer: function() {
+      this.pointer = !this.pointer;
+    },
+    setTheme: function(value) {
+      if (value >= 0 && value < THEMES.length) {
+        this.theme = value;
+      }
+    },
+    currentSlide: function() {
+      if (this.data.length > 0) {
+        return this.data[this.index];
+      } else {
+        return {};
+      }
+    },
+    forward: function() {
+      this.setIndex(this.index + 1);
+    },
+    backward: function() {
+      this.setIndex(this.index - 1);
+    },
+    handleClick: function(event) {
+      this.forward();
+      event.preventDefault();
+    },
+    handleContextmenu: function(event) {
+      this.backward();
+      m.redraw();
+      event.preventDefault();
+    },
+    oninit: function(vnode) {
+      m.request({method: 'GET', url: 'slides.json'}).
+        then(function(data) { vnode.state.setData(data) }).
+        catch(function(error) { vnode.state.setError(error.message) });
+    },
+    view: function(vnode) {
+      return m(Slide, {
+        data: vnode.state.currentSlide(),
+        pointer: vnode.state.pointer,
+        theme: vnode.state.theme,
+        onclick: vnode.state.handleClick.bind(vnode.state),
+        ontouchend: vnode.state.handleClick.bind(vnode.state),
+        oncontextmenu: vnode.state.handleContextmenu.bind(vnode.state)
+      });
+    }
+  };
+
+  // render
+  document.body = document.createElement('body');
+  m.mount(document.body, Presentation);
 </script>
