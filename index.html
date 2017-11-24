@@ -134,6 +134,7 @@
   var Slide = {
     oncreate: function(vnode) {
       document.oncontextmenu = vnode.attrs.oncontextmenu;
+      document.onkeydown = vnode.attrs.onkeydown;
     },
     view: function(vnode) {
       var data = vnode.attrs.data;
@@ -186,6 +187,10 @@
         this.theme = value;
       }
     },
+    switchTheme: function() {
+      var nextTheme = (this.theme + 1) % THEMES.length;
+      this.setTheme(nextTheme);
+    },
     currentSlide: function() {
       if (this.data.length > 0) {
         return this.data[this.index];
@@ -208,6 +213,31 @@
       m.redraw();
       event.preventDefault();
     },
+    handleKeydown: function(event) {
+      switch (event.key) {
+        case 'Enter':
+        case ' ':
+        case 'ArrowRight':
+        case 'ArrowDown':
+          this.forward();
+          break;
+        case 'Backspace':
+        case 'ArrowLeft':
+        case 'ArrowUp':
+          this.backward();
+          break;
+        case 'c':
+          this.togglePointer();
+          break;
+        case 't':
+          this.switchTheme();
+          break;
+        default:
+          return;
+      }
+      m.redraw();
+      event.preventDefault();
+    },
     oninit: function(vnode) {
       m.request({method: 'GET', url: 'slides.json'}).
         then(function(data) { vnode.state.setData(data) }).
@@ -220,7 +250,8 @@
         theme: vnode.state.theme,
         onclick: vnode.state.handleClick.bind(vnode.state),
         ontouchend: vnode.state.handleClick.bind(vnode.state),
-        oncontextmenu: vnode.state.handleContextmenu.bind(vnode.state)
+        oncontextmenu: vnode.state.handleContextmenu.bind(vnode.state),
+        onkeydown: vnode.state.handleKeydown.bind(vnode.state)
       });
     }
   };

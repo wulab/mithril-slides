@@ -36,7 +36,7 @@ Advance to the next slide | Right Arrow, Down Arrow, Space bar or Return
 Go to previous slide      | Left Arrow, Up Arrow or Backspace
 Quit presentation mode    | Period or Escape
 Show or hide the pointer  | C
-Change presentation theme | T
+Switch presentation theme | T
 
 ## Offline mode
 mithril-slides requires an internet connection to work. If you are to present in a
