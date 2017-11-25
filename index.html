@@ -223,7 +223,7 @@
       var data = vnode.attrs.data;
       return m('#slide', {
         class: THEMES[vnode.attrs.theme],
-        style: vnode.attrs.pointer ? 'cursor:default' : 'cursor:none',
+        style: {cursor: vnode.attrs.pointer ? 'default' : 'none'},
         onclick: vnode.attrs.onclick,
         ontouchend: vnode.attrs.ontouchend
       }, [
