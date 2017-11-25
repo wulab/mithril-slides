@@ -161,6 +161,58 @@
     }
   };
 
+  // model
+  var state = {
+    data: [],
+    error: '',
+    index: 0,
+    pointer: true,
+    theme: 2,
+
+    setData: function(value) {
+      if (Array.isArray(value)) {
+        state.data = value;
+      }
+    },
+    setError: function(value) {
+      if (typeof(value) === 'string') {
+        state.error = value;
+      }
+    },
+    setIndex: function(value) {
+      if (value >= 0 && value < state.data.length) {
+        state.index = value;
+      }
+    },
+    setTheme: function(value) {
+      if (value >= 0 && value < THEMES.length) {
+        state.theme = value;
+      }
+    },
+
+    load: function() {
+      m.request({method: 'GET', url: 'slides.json'}).
+        then(function(data) { state.setData(data) }).
+        catch(function(error) { state.setError(error.message) });
+    },
+    togglePointer: function() {
+      state.pointer = !state.pointer;
+    },
+    switchTheme: function() {
+      var nextTheme = (state.theme + 1) % THEMES.length;
+      state.setTheme(nextTheme);
+    },
+    currentSlide: function() {
+      return state.data.length > 0 ? state.data[state.index] : {};
+    },
+    forward: function() {
+      state.setIndex(state.index + 1);
+    },
+    backward: function() {
+      state.setIndex(state.index - 1);
+    },
+  };
+
   // view
   var Slide = {
     oncreate: function(vnode) {
@@ -190,57 +242,12 @@
   };
 
   var Presentation = {
-    data: [],
-    error: '',
-    index: 0,
-    pointer: true,
-    theme: 2,
-    setData: function(value) {
-      if (Array.isArray(value)) {
-        this.data = value;
-      }
-    },
-    setError: function(value) {
-      if (typeof(value) === 'string') {
-        this.error = value;
-      }
-    },
-    setIndex: function(value) {
-      if (value >= 0 && value < this.data.length) {
-        this.index = value;
-      }
-    },
-    togglePointer: function() {
-      this.pointer = !this.pointer;
-    },
-    setTheme: function(value) {
-      if (value >= 0 && value < THEMES.length) {
-        this.theme = value;
-      }
-    },
-    switchTheme: function() {
-      var nextTheme = (this.theme + 1) % THEMES.length;
-      this.setTheme(nextTheme);
-    },
-    currentSlide: function() {
-      if (this.data.length > 0) {
-        return this.data[this.index];
-      } else {
-        return {};
-      }
-    },
-    forward: function() {
-      this.setIndex(this.index + 1);
-    },
-    backward: function() {
-      this.setIndex(this.index - 1);
-    },
     handleClick: function(event) {
-      this.play(this.forward.bind(this));
+      this.play(state.forward);
       event.preventDefault();
     },
     handleContextmenu: function(event) {
-      this.play(this.backward.bind(this));
+      this.play(state.backward);
       m.redraw();
       event.preventDefault();
     },
@@ -250,18 +257,18 @@
         case ' ':
         case 'ArrowRight':
         case 'ArrowDown':
-          this.play(this.forward.bind(this));
+          this.play(state.forward);
           break;
         case 'Backspace':
         case 'ArrowLeft':
         case 'ArrowUp':
-          this.play(this.backward.bind(this));
+          this.play(state.backward);
           break;
         case 'c':
-          this.togglePointer();
+          state.togglePointer();
           break;
         case 't':
-          this.switchTheme();
+          state.switchTheme();
           break;
         case 'q':
           Fullscreen.exit();
@@ -272,11 +279,7 @@
       m.redraw();
       event.preventDefault();
     },
-    oninit: function(vnode) {
-      m.request({method: 'GET', url: 'slides.json'}).
-        then(function(data) { vnode.state.setData(data) }).
-        catch(function(error) { vnode.state.setError(error.message) });
-    },
+    oninit: state.load,
     oncreate: function(vnode) {
       vnode.state.play = function(action) {
         if (Fullscreen.isEnabled() && !Fullscreen.hasElement()) {
@@ -288,13 +291,13 @@
     },
     view: function(vnode) {
       return m(Slide, {
-        data: vnode.state.currentSlide(),
-        pointer: vnode.state.pointer,
-        theme: vnode.state.theme,
-        onclick: vnode.state.handleClick.bind(vnode.state),
-        ontouchend: vnode.state.handleClick.bind(vnode.state),
-        oncontextmenu: vnode.state.handleContextmenu.bind(vnode.state),
-        onkeydown: vnode.state.handleKeydown.bind(vnode.state)
+        data: state.currentSlide(),
+        pointer: state.pointer,
+        theme: state.theme,
+        onclick: this.handleClick.bind(this),
+        ontouchend: this.handleClick.bind(this),
+        oncontextmenu: this.handleContextmenu.bind(this),
+        onkeydown: this.handleKeydown.bind(this)
       });
     }
   };
