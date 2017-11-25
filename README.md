@@ -34,7 +34,7 @@ Action                    | Shortcut
 ------------------------- | --------------------------------------------
 Advance to the next slide | Right Arrow, Down Arrow, Space bar or Return
 Go to previous slide      | Left Arrow, Up Arrow or Backspace
-Quit presentation mode    | Period or Escape
+Quit presentation mode    | Esc or Q
 Show or hide the pointer  | C
 Switch presentation theme | T
 

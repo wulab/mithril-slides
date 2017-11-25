@@ -130,7 +130,38 @@
   // setup
   var THEMES = ['black', 'white', 'gradient', 'showroom'];
 
-  // component
+  var Fullscreen = {
+    isEnabled: function() {
+      return document.webkitFullscreenEnabled ||
+                  document.mozFullScreenEnabled ||
+                  document.msFullscreenEnabled;
+    },
+    hasElement: function() {
+      return !( !document.webkitFullscreenElement &&
+                !document.mozFullScreenElement &&
+                !document.msFullscreenElement );
+    },
+    request: function(element) {
+      if (element.webkitRequestFullscreen) {
+        element.webkitRequestFullscreen();
+      } else if (element.mozRequestFullScreen) {
+        element.mozRequestFullScreen();
+      } else if (element.msRequestFullscreen) {
+        element.msRequestFullscreen();
+      }
+    },
+    exit: function() {
+      if (document.webkitExitFullscreen) {
+        document.webkitExitFullscreen();
+      } else if (document.mozCancelFullScreen) {
+        document.mozCancelFullScreen();
+      } else if (document.msExitFullscreen) {
+        document.msExitFullscreen();
+      }
+    }
+  };
+
+  // view
   var Slide = {
     oncreate: function(vnode) {
       document.oncontextmenu = vnode.attrs.oncontextmenu;
@@ -205,11 +236,11 @@
       this.setIndex(this.index - 1);
     },
     handleClick: function(event) {
-      this.forward();
+      this.play(this.forward.bind(this));
       event.preventDefault();
     },
     handleContextmenu: function(event) {
-      this.backward();
+      this.play(this.backward.bind(this));
       m.redraw();
       event.preventDefault();
     },
@@ -219,18 +250,21 @@
         case ' ':
         case 'ArrowRight':
         case 'ArrowDown':
-          this.forward();
+          this.play(this.forward.bind(this));
           break;
         case 'Backspace':
         case 'ArrowLeft':
         case 'ArrowUp':
-          this.backward();
+          this.play(this.backward.bind(this));
           break;
         case 'c':
           this.togglePointer();
           break;
         case 't':
           this.switchTheme();
+          break;
+        case 'q':
+          Fullscreen.exit();
           break;
         default:
           return;
@@ -242,6 +276,15 @@
       m.request({method: 'GET', url: 'slides.json'}).
         then(function(data) { vnode.state.setData(data) }).
         catch(function(error) { vnode.state.setError(error.message) });
+    },
+    oncreate: function(vnode) {
+      vnode.state.play = function(action) {
+        if (Fullscreen.isEnabled() && !Fullscreen.hasElement()) {
+          Fullscreen.request(vnode.dom);
+        } else {
+          action();
+        }
+      };
     },
     view: function(vnode) {
       return m(Slide, {
