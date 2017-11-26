@@ -1,13 +1,14 @@
 <!doctype html>
+<meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>mithril-slides</title>
 <style>
   /* base */
   html { font-size: 5px }
   @media (min-width: 600px) { html { font-size: 6px } }
-  @media (min-width: 800px) { html { font-size: 8px } }
-  @media (min-width: 1200px) { html { font-size: 10px } }
-  @media (min-width: 1600px) { html { font-size: 14px } }
+  @media (min-width: 800px) { html { font-size: 10px } }
+  @media (min-width: 1200px) { html { font-size: 11px } }
+  @media (min-width: 1600px) { html { font-size: 15px } }
   body {
     margin: 0;
     background-color: #000;
@@ -23,7 +24,7 @@
   h1, h2, img { margin: 0 0 2.4rem 0 }
   h1, h2 { text-align: center; line-height: 1 }
   ul, pre { text-align: left }
-  ul { line-height: 1; -moz-padding-start: 3.6rem; -webkit-padding-start: 3.6rem }
+  ul { line-height: 1.2; -moz-padding-start: 3.6rem; -webkit-padding-start: 3.6rem }
   li + li { margin-top: 4.2rem }
   pre {
     font-family: "Source Code Pro", monospace;
@@ -39,6 +40,7 @@
     background-repeat: no-repeat;
     background-size: 8%;
   }
+
   /* layout */
   #slide {
     position: absolute;
@@ -51,8 +53,8 @@
   #objects {
     position: absolute;
     top: 50%;
-    right: 16%;
-    left: 16%;
+    right: 8%;
+    left: 8%;
     -webkit-transform: translate(0, -50%);
     -moz-transform: translate(0, -50%);
     -ms-transform: translate(0, -50%);
@@ -60,9 +62,13 @@
   }
   #objects > :first-child { margin-top: 0 }
   #objects > :last-child { margin-bottom: 0 }
-  @media (min-width: 1600px) {
-    #slide, #objects { right: 8%; left: 8% }
+  @media (min-width: 1200px) {
+    #objects { right: 16%; left: 16% }
   }
+  @media (min-width: 1600px) {
+    #slide { right: 8%; left: 8% }
+  }
+
   /* theme */
   .black {
     background-color: #000;
@@ -104,8 +110,9 @@
   }
   .showroom h1 { font-size: 7.2rem; font-weight: 300; text-transform: uppercase }
   .showroom h2 { font-size: 3.8rem; font-weight: 300 }
-  .showroom ul { font-size: 4.6rem; font-weight: 300; line-height: 1.2 }
+  .showroom ul { font-size: 4.6rem; font-weight: 300 }
   .showroom pre { font-size: 2.8rem }
+
   /* orientation */
   @media screen and (orientation: portrait) {
     #slide {
@@ -113,167 +120,190 @@
       background-image: url("data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjQUFBQUFBIiBoZWlnaHQ9IjQ4IiB2aWV3Qm94PSIwIDAgMjQgMjQiIHdpZHRoPSI0OCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICAgIDxwYXRoIGQ9Ik0wIDBoMjR2MjRIMHoiIGZpbGw9Im5vbmUiLz4KICAgIDxwYXRoIGQ9Ik0xNi40OCAyLjUyYzMuMjcgMS41NSA1LjYxIDQuNzIgNS45NyA4LjQ4aDEuNUMyMy40NCA0Ljg0IDE4LjI5IDAgMTIgMGwtLjY2LjAzIDMuODEgMy44MSAxLjMzLTEuMzJ6bS02LjI1LS43N2MtLjU5LS41OS0xLjU0LS41OS0yLjEyIDBMMS43NSA4LjExYy0uNTkuNTktLjU5IDEuNTQgMCAyLjEybDEyLjAyIDEyLjAyYy41OS41OSAxLjU0LjU5IDIuMTIgMGw2LjM2LTYuMzZjLjU5LS41OS41OS0xLjU0IDAtMi4xMkwxMC4yMyAxLjc1em00LjYgMTkuNDRMMi44MSA5LjE3bDYuMzYtNi4zNiAxMi4wMiAxMi4wMi02LjM2IDYuMzZ6bS03LjMxLjI5QzQuMjUgMTkuOTQgMS45MSAxNi43NiAxLjU1IDEzSC4wNUMuNTYgMTkuMTYgNS43MSAyNCAxMiAyNGwuNjYtLjAzLTMuODEtMy44MS0xLjMzIDEuMzJ6Ii8+Cjwvc3ZnPg==");
       background-position: center;
       background-repeat: no-repeat;
-      background-size: 32%;
+      background-size: 128px;
+      pointer-events: none;
     }
     #objects { display: none }
   }
 </style>
 <script src="mithril.js"></script>
 <script>
-  //namespace
-  var app = {};
-  //config
-  app.config = function(ctrl) {
-    var THEMES = ['black', 'white', 'gradient', 'showroom'];
-    return function(element, isInitialized) {
-      if (!isInitialized) {
-        function forward(event) {
-          play();
-          event.preventDefault();
-        }
-        function backward(event) {
-          play(true);
-          event.preventDefault();
-        }
-        function showPointer() {
-          element.style.cursor = 'default';
-        }
-        function hidePointer() {
-          element.style.cursor = 'none';
-        }
-        function isPointerVisible() {
-          return element.style.cursor != 'none';
-        }
-        function requestFullscreen() {
-          if (element.webkitRequestFullScreen) {
-            element.webkitRequestFullScreen();
-          } else if (element.mozRequestFullScreen) {
-            element.mozRequestFullScreen();
-          } else if (element.msRequestFullscreen) {
-            element.msRequestFullscreen();
-          }
-          hidePointer();
-        }
-        function exitFullscreen() {
-          if (document.webkitExitFullscreen) {
-            document.webkitExitFullscreen();
-          } else if (document.mozCancelFullScreen) {
-            document.mozCancelFullScreen();
-          } else if (document.msExitFullscreen) {
-            document.msExitFullscreen();
-          }
-          showPointer();
-        }
-        function isFullScreenEnabled() {
-          return document.webkitFullscreenEnabled ||
-                 document.mozFullScreenEnabled ||
-                 document.msFullscreenEnabled;
-        }
-        function hasFullScreenElement() {
-          return !( !document.webkitFullscreenElement &&
-                    !document.mozFullScreenElement &&
-                    !document.msFullscreenElement );
-        }
-        function changeTheme() {
-          var currentIndex  = THEMES.indexOf(element.className);
-          var nextIndex     = (currentIndex + 1) % THEMES.length;
-          element.className = THEMES[nextIndex];
-        }
-        function navigate(event) {
-          switch (event.keyCode) {
-            case 13:   //Enter
-            case 32:   //Space
-            case 39:   //ArrowRight
-            case 40:   //ArrowDown
-              play();
-              break;
-            case 8:    //Backspace
-            case 37:   //ArrowLeft
-            case 38:   //ArrowUp
-              play(true);
-              break;
-            case 67:   //KeyC
-              if ( isPointerVisible() ) {
-                hidePointer();
-              } else {
-                showPointer();
-              }
-              break;
-            case 84:   //KeyT
-              changeTheme();
-              break;
-            case 190:  //Period
-              exitFullscreen();
-              break;
-            default:
-              return;
-          }
-          event.preventDefault();
-        }
-        function play(reverse) {
-          if ( isFullScreenEnabled() && !hasFullScreenElement() ) {
-            requestFullscreen();
-          } else {
-            m.startComputation();
-            ctrl.rotateSlide(reverse);
-            m.endComputation();
-          }
-        }
-        window.onclick       = forward;
-        window.ontouchend    = forward;
-        window.oncontextmenu = backward;
-        window.onkeydown     = navigate;
+  // setup
+  var THEMES = ['black', 'white', 'gradient', 'showroom'];
+
+  var Fullscreen = {
+    isEnabled: function() {
+      return document.webkitFullscreenEnabled ||
+                  document.mozFullScreenEnabled ||
+                  document.msFullscreenEnabled;
+    },
+    hasElement: function() {
+      return !( !document.webkitFullscreenElement &&
+                !document.mozFullScreenElement &&
+                !document.msFullscreenElement );
+    },
+    request: function(element) {
+      if (element.webkitRequestFullscreen) {
+        element.webkitRequestFullscreen();
+      } else if (element.mozRequestFullScreen) {
+        element.mozRequestFullScreen();
+      } else if (element.msRequestFullscreen) {
+        element.msRequestFullscreen();
       }
-    };
-  };
-  //model
-  app.SlideList = function() {
-    return m.request({ method: "GET", url: "slides.json" });
-  };
-  //controller
-  app.controller = function() {
-    var slides = app.SlideList();
-    slides.then(function(slides) {
-      if (slides[0].title) {
-        document.title = slides[0].title;
+    },
+    exit: function() {
+      if (document.webkitExitFullscreen) {
+        document.webkitExitFullscreen();
+      } else if (document.mozCancelFullScreen) {
+        document.mozCancelFullScreen();
+      } else if (document.msExitFullscreen) {
+        document.msExitFullscreen();
       }
-      slides.forEach(function(slide) {
-        if (slide.image) {
-          var image = new Image();
-          image.src = slide.image.src;
-        }
-      });
-    });
-    return {
-      currentSlide: function() { return slides()[0] },
-      rotateSlide: function(reverse) {
-        if (reverse) {
-          slides().unshift( slides().pop() );
-        } else {
-          slides().push( slides().shift() );
-        }
-      }
-    };
+    }
   };
-  //view
-  app.view = function(ctrl) {
-    var slide = ctrl.currentSlide();
-    return [
-      m("div#slide.gradient", { config: app.config(ctrl) }, [
-        m("div#objects", [
-          !slide.image    ? "" : m("img"   , slide.image            ),
-          !slide.title    ? "" : m("h1"    , m.trust(slide.title)   ),
-          !slide.subtitle ? "" : m("h2"    , m.trust(slide.subtitle)),
-          !slide.codes    ? "" : m("pre"   , slide.codes.join("\n") ),
-          !slide.embed    ? "" : m("iframe", slide.embed            ),
-          !slide.bullets  ? "" : m("ul"    ,
-            slide.bullets.map( function(bullet) { return m("li", bullet) } )
+
+  // model
+  var state = {
+    data: [],
+    error: '',
+    index: 0,
+    pointer: true,
+    theme: 2,
+
+    setData: function(value) {
+      if (Array.isArray(value)) {
+        state.data = value;
+      }
+    },
+    setError: function(value) {
+      if (typeof(value) === 'string') {
+        state.error = value;
+      }
+    },
+    setIndex: function(value) {
+      if (value >= 0 && value < state.data.length) {
+        state.index = value;
+      }
+    },
+    setTheme: function(value) {
+      if (value >= 0 && value < THEMES.length) {
+        state.theme = value;
+      }
+    },
+
+    load: function() {
+      m.request({method: 'GET', url: 'slides.json'}).
+        then(function(data) { state.setData(data) }).
+        catch(function(error) { state.setError(error.message) });
+    },
+    togglePointer: function() {
+      state.pointer = !state.pointer;
+    },
+    switchTheme: function() {
+      var nextTheme = (state.theme + 1) % THEMES.length;
+      state.setTheme(nextTheme);
+    },
+    currentSlide: function() {
+      return state.data.length > 0 ? state.data[state.index] : {};
+    },
+    forward: function() {
+      state.setIndex(state.index + 1);
+    },
+    backward: function() {
+      state.setIndex(state.index - 1);
+    },
+  };
+
+  // view
+  var Slide = {
+    oncreate: function(vnode) {
+      document.oncontextmenu = vnode.attrs.oncontextmenu;
+      document.onkeydown = vnode.attrs.onkeydown;
+    },
+    view: function(vnode) {
+      var data = vnode.attrs.data;
+      return m('#slide', {
+        class: THEMES[vnode.attrs.theme],
+        style: {cursor: vnode.attrs.pointer ? 'default' : 'none'},
+        onclick: vnode.attrs.onclick,
+        ontouchend: vnode.attrs.ontouchend
+      }, [
+        m('#objects', [
+          !data.image    ? '' : m('img'   , data.image            ),
+          !data.title    ? '' : m('h1'    , m.trust(data.title)   ),
+          !data.subtitle ? '' : m('h2'    , m.trust(data.subtitle)),
+          !data.codes    ? '' : m('pre'   , data.codes.join('\n') ),
+          !data.embed    ? '' : m('iframe', data.embed            ),
+          !data.bullets  ? '' : m('ul'    ,
+            data.bullets.map( function(bullet) { return m('li', bullet) } )
           )
         ])
-      ]),
-    ];
+      ]);
+    }
   };
-  //initialize
-  document.body = document.createElement("body");
-  m.module(document.body, app);
+
+  var Presentation = {
+    handleClick: function(event) {
+      this.play(state.forward);
+      event.preventDefault();
+    },
+    handleContextmenu: function(event) {
+      this.play(state.backward);
+      m.redraw();
+      event.preventDefault();
+    },
+    handleKeydown: function(event) {
+      switch (event.key) {
+        case 'Enter':
+        case ' ':
+        case 'ArrowRight':
+        case 'ArrowDown':
+          this.play(state.forward);
+          break;
+        case 'Backspace':
+        case 'ArrowLeft':
+        case 'ArrowUp':
+          this.play(state.backward);
+          break;
+        case 'c':
+          state.togglePointer();
+          break;
+        case 't':
+          state.switchTheme();
+          break;
+        case 'q':
+          Fullscreen.exit();
+          break;
+        default:
+          return;
+      }
+      m.redraw();
+      event.preventDefault();
+    },
+    oninit: state.load,
+    oncreate: function(vnode) {
+      vnode.state.play = function(action) {
+        if (Fullscreen.isEnabled() && !Fullscreen.hasElement()) {
+          Fullscreen.request(vnode.dom);
+        } else {
+          action();
+        }
+      };
+    },
+    view: function(vnode) {
+      return m(Slide, {
+        data: state.currentSlide(),
+        pointer: state.pointer,
+        theme: state.theme,
+        onclick: this.handleClick.bind(this),
+        ontouchend: this.handleClick.bind(this),
+        oncontextmenu: this.handleContextmenu.bind(this),
+        onkeydown: this.handleKeydown.bind(this)
+      });
+    }
+  };
+
+  // render
+  document.body = document.createElement('body');
+  m.mount(document.body, Presentation);
 </script>

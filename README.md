@@ -4,10 +4,10 @@ A Keynote-inspired presentation app written with Mithril
 ![screenshots](https://cloud.githubusercontent.com/assets/592709/17454537/012dc70c-5bc4-11e6-86e1-5d5ce2bc35b8.gif)
 
 ## Features
-* Present ideas with your browser
-* Embed any websites or YouTube videos into your slides
-* Support mobile and tablet devices
-* An entire app in a single file
+* Quickly create your slides in [a simple JSON file](slides.json)
+* Embed any websites, web applications or YouTube videos
+* Present your ideas using only a web browser
+* Support viewing on mobile or tablet devices
 * A total of 4 themes to choose from
 
 ![themes](https://user-images.githubusercontent.com/592709/32982023-6333a648-ccb0-11e7-87e6-cdb94c5573f0.png)
@@ -34,9 +34,9 @@ Action                    | Shortcut
 ------------------------- | --------------------------------------------
 Advance to the next slide | Right Arrow, Down Arrow, Space bar or Return
 Go to previous slide      | Left Arrow, Up Arrow or Backspace
-Quit presentation mode    | Period or Escape
+Quit presentation mode    | Esc or Q
 Show or hide the pointer  | C
-Change presentation theme | T
+Switch presentation theme | T
 
 ## Offline mode
 mithril-slides requires an internet connection to work. If you are to present in a
