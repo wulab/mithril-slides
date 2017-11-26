@@ -199,7 +199,7 @@
     togglePointer: function() {
       state.pointer = !state.pointer;
     },
-    switchTheme: function() {
+    changeTheme: function() {
       var nextTheme = (state.theme + 1) % THEMES.length;
       state.setTheme(nextTheme);
     },
@@ -269,7 +269,7 @@
           state.togglePointer();
           break;
         case 't':
-          state.switchTheme();
+          state.changeTheme();
           break;
         case 'q':
           Fullscreen.exit();
