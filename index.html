@@ -166,7 +166,6 @@
   // model
   var state = {
     slides: [],
-    error: '',
     index: 0,
     pointer: true,
     theme: 2,
@@ -174,11 +173,6 @@
     setSlides: function(value) {
       if (Array.isArray(value)) {
         state.slides = value;
-      }
-    },
-    setError: function(value) {
-      if (typeof(value) === 'string') {
-        state.error = value;
       }
     },
     setIndex: function(value) {
@@ -196,7 +190,7 @@
       m.request({method: 'GET', url: 'slides.json'}).
         then(state.setSlides).
         then(state.loadImages).
-        catch(function(error) { state.setError(error.message) });
+        catch(function(error) { window.alert(error.message) });
     },
     loadImages: function() {
       state.slides.forEach(function(slide) {
