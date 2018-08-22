@@ -165,15 +165,15 @@
 
   // model
   var state = {
-    data: [],
+    slides: [],
     error: '',
     index: 0,
     pointer: true,
     theme: 2,
 
-    setData: function(value) {
+    setSlides: function(value) {
       if (Array.isArray(value)) {
-        state.data = value;
+        state.slides = value;
       }
     },
     setError: function(value) {
@@ -182,7 +182,7 @@
       }
     },
     setIndex: function(value) {
-      if (value >= 0 && value < state.data.length) {
+      if (value >= 0 && value < state.slides.length) {
         state.index = value;
       }
     },
@@ -192,10 +192,19 @@
       }
     },
 
-    load: function() {
+    loadSlides: function() {
       m.request({method: 'GET', url: 'slides.json'}).
-        then(function(data) { state.setData(data) }).
+        then(state.setSlides).
+        then(state.loadImages).
         catch(function(error) { state.setError(error.message) });
+    },
+    loadImages: function() {
+      state.slides.forEach(function(slide) {
+        if (slide.image) {
+          var image = new Image();
+          image.src = slide.image.src;
+        }
+      });
     },
     togglePointer: function() {
       state.pointer = !state.pointer;
@@ -205,7 +214,7 @@
       state.setTheme(nextTheme);
     },
     currentSlide: function() {
-      return state.data.length > 0 ? state.data[state.index] : {};
+      return state.slides.length > 0 ? state.slides[state.index] : {};
     },
     forward: function() {
       state.setIndex(state.index + 1);
@@ -222,7 +231,7 @@
       document.onkeydown = vnode.attrs.onkeydown;
     },
     view: function(vnode) {
-      var data = vnode.attrs.data;
+      var slide = vnode.attrs.slide;
       return m('#slide', {
         class: THEMES[vnode.attrs.theme],
         style: {cursor: vnode.attrs.pointer ? 'default' : 'none'},
@@ -230,13 +239,13 @@
         ontouchend: vnode.attrs.ontouchend
       }, [
         m('#objects', [
-          !data.image    ? '' : m('img'   , data.image            ),
-          !data.title    ? '' : m('h1'    , m.trust(data.title)   ),
-          !data.subtitle ? '' : m('h2'    , m.trust(data.subtitle)),
-          !data.codes    ? '' : m('pre'   , data.codes.join('\n') ),
-          !data.embed    ? '' : m('iframe', data.embed            ),
-          !data.bullets  ? '' : m('ul'    ,
-            data.bullets.map( function(bullet) { return m('li', bullet) } )
+          !slide.image    ? '' : m('img'   , slide.image            ),
+          !slide.title    ? '' : m('h1'    , m.trust(slide.title)   ),
+          !slide.subtitle ? '' : m('h2'    , m.trust(slide.subtitle)),
+          !slide.codes    ? '' : m('pre'   , slide.codes.join('\n') ),
+          !slide.embed    ? '' : m('iframe', slide.embed            ),
+          !slide.bullets  ? '' : m('ul'    ,
+            slide.bullets.map( function(bullet) { return m('li', bullet) } )
           )
         ])
       ]);
@@ -285,7 +294,7 @@
       m.redraw();
       event.preventDefault();
     },
-    oninit: state.load,
+    oninit: state.loadSlides,
     oncreate: function(vnode) {
       vnode.state.play = function(action) {
         if (Fullscreen.isEnabled() && !Fullscreen.hasElement()) {
@@ -297,7 +306,7 @@
     },
     view: function(vnode) {
       return m(Slide, {
-        data: state.currentSlide(),
+        slide: state.currentSlide(),
         pointer: state.pointer,
         theme: state.theme,
         onclick: this.handleClick.bind(this),
