@@ -304,6 +304,12 @@
         }
       };
     },
+    onupdate: function(vnode) {
+      var firstSlide = state.slides[0];
+      if (firstSlide) {
+        document.title = firstSlide.title || firstSlide.subtitle || 'Untitled';
+      }
+    },
     view: function(vnode) {
       return m(Slide, {
         slide: state.currentSlide(),
