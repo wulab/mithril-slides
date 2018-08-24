@@ -167,9 +167,9 @@
   var state = {
     slides: [],
     index: 0,
-    multitouch: false,
     pointer: true,
     theme: 2,
+    touch: '',
 
     setSlides: function(value) {
       if (Array.isArray(value)) {
@@ -250,20 +250,20 @@
 
   var Presentation = {
     handleTouchstart: function(event) {
-      if (event.touches.length > 1) {
-        state.multitouch = true;
-      }
+      var firstTouch = event.touches[0];
+      var center = document.body.clientWidth / 2;
+      state.touch = firstTouch.pageX < center ? 'left' : 'right';
       event.preventDefault();
     },
     handleTouchend: function(event) {
       if (event.touches.length == 0) {
-        if (state.multitouch) {
+        if (state.touch == 'left') {
           this.play(state.backward);
           m.redraw();
-        } else {
+        } else if (state.touch == 'right') {
           this.play(state.forward);
         }
-        state.multitouch = false;
+        state.touch = '';
       }
       event.preventDefault();
     },
