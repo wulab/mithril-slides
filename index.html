@@ -167,6 +167,7 @@
   var state = {
     slides: [],
     index: 0,
+    multitouch: false,
     pointer: true,
     theme: 2,
 
@@ -230,6 +231,7 @@
         class: THEMES[vnode.attrs.theme],
         style: {cursor: vnode.attrs.pointer ? 'default' : 'none'},
         onclick: vnode.attrs.onclick,
+        ontouchstart: vnode.attrs.ontouchstart,
         ontouchend: vnode.attrs.ontouchend
       }, [
         m('#objects', [
@@ -247,6 +249,24 @@
   };
 
   var Presentation = {
+    handleTouchstart: function(event) {
+      if (event.touches.length > 1) {
+        state.multitouch = true;
+      }
+      event.preventDefault();
+    },
+    handleTouchend: function(event) {
+      if (event.touches.length == 0) {
+        if (state.multitouch) {
+          this.play(state.backward);
+          m.redraw();
+        } else {
+          this.play(state.forward);
+        }
+        state.multitouch = false;
+      }
+      event.preventDefault();
+    },
     handleClick: function(event) {
       this.play(state.forward);
       event.preventDefault();
@@ -310,7 +330,8 @@
         pointer: state.pointer,
         theme: state.theme,
         onclick: this.handleClick.bind(this),
-        ontouchend: this.handleClick.bind(this),
+        ontouchstart: this.handleTouchstart.bind(this),
+        ontouchend: this.handleTouchend.bind(this),
         oncontextmenu: this.handleContextmenu.bind(this),
         onkeydown: this.handleKeydown.bind(this)
       });
