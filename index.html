@@ -193,7 +193,7 @@
     },
 
     loadSlides: function() {
-      m.request({method: 'GET', url: 'slides.json'}).
+      return m.request({method: 'GET', url: 'slides.json'}).
         then(state.setSlides).
         then(state.loadImages).
         catch(function(error) { window.alert(error.message) });
@@ -316,7 +316,14 @@
       m.redraw();
       event.preventDefault();
     },
-    oninit: state.loadSlides,
+    oninit: function(vnode) {
+      state.loadSlides().then(function() {
+        var firstSlide = state.slides[0];
+        if (firstSlide) {
+          document.title = firstSlide.title || firstSlide.subtitle || 'Untitled';
+        }
+      });
+    },
     oncreate: function(vnode) {
       vnode.state.play = function(action) {
         if (Fullscreen.isEnabled() && !Fullscreen.hasElement()) {
@@ -325,12 +332,6 @@
           action();
         }
       };
-    },
-    onupdate: function(vnode) {
-      var firstSlide = state.slides[0];
-      if (firstSlide) {
-        document.title = firstSlide.title || firstSlide.subtitle || 'Untitled';
-      }
     },
     view: function(vnode) {
       return m(Slide, {
