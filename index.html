@@ -130,7 +130,8 @@
 <script src="//unpkg.com/mithril@^1.1.6/mithril.js"></script>
 <script>
   // setup
-  var THEMES = ['black', 'white', 'gradient', 'showroom'];
+  var Touch = {LEFT: 0, RIGHT: 1};
+  var Theme = {BLACK: 0, WHITE: 1, GRADIENT: 2, SHOWROOM: 3};
 
   var Fullscreen = {
     isEnabled: function() {
@@ -168,30 +169,47 @@
     slides: [],
     index: 0,
     pointer: true,
-    theme: 2,
+    theme: Theme.GRADIENT,
     touch: null,
 
-    setSlides: function(value) {
-      if (Array.isArray(value)) {
-        state.slides = value;
-      }
-    },
     setIndex: function(value) {
       if (value >= 0 && value < state.slides.length) {
         state.index = value;
       }
     },
+    setSlides: function(value) {
+      if (Array.isArray(value)) {
+        state.slides = value;
+      }
+    },
     setTheme: function(value) {
-      if (value >= 0 && value < THEMES.length) {
+      if (value in Object.values(Theme)) {
         state.theme = value;
       }
     },
     setTouch: function(value) {
-      if (value === 'left' || value === 'right') {
+      if (value in Object.values(Touch)) {
         state.touch = value;
       }
     },
 
+    backward: function() {
+      state.setIndex(state.index - 1);
+    },
+    clearTouch: function() {
+      state.touch = null;
+    },
+    currentSlide: function() {
+      return state.slides.length > 0 ? state.slides[state.index] : {};
+    },
+    forward: function() {
+      state.setIndex(state.index + 1);
+    },
+    getThemeName: function(value) {
+      return Object.keys(Theme).find(function(key) {
+        return Theme[key] === value;
+      });
+    },
     loadSlides: function() {
       return m.request({method: 'GET', url: 'slides.json'}).
         then(state.setSlides).
@@ -206,24 +224,11 @@
         }
       });
     },
+    nextTheme: function() {
+      state.setTheme((state.theme + 1) % Object.keys(Theme).length);
+    },
     togglePointer: function() {
       state.pointer = !state.pointer;
-    },
-    changeTheme: function() {
-      var nextTheme = (state.theme + 1) % THEMES.length;
-      state.setTheme(nextTheme);
-    },
-    clearTouch: function() {
-      state.touch = null;
-    },
-    currentSlide: function() {
-      return state.slides.length > 0 ? state.slides[state.index] : {};
-    },
-    forward: function() {
-      state.setIndex(state.index + 1);
-    },
-    backward: function() {
-      state.setIndex(state.index - 1);
     },
   };
 
@@ -236,7 +241,7 @@
     view: function(vnode) {
       var slide = vnode.attrs.slide;
       return m('#slide', {
-        class: THEMES[vnode.attrs.theme],
+        class: state.getThemeName(vnode.attrs.theme).toLowerCase(),
         style: {cursor: vnode.attrs.pointer ? 'default' : 'none'},
         onclick: vnode.attrs.onclick,
         ontouchstart: vnode.attrs.ontouchstart,
@@ -263,17 +268,17 @@
       event.preventDefault();
       var firstTouch = event.touches[0];
       var pageCenter = document.body.clientWidth / 2;
-      state.setTouch(firstTouch.pageX < pageCenter ? 'left' : 'right');
+      state.setTouch(firstTouch.pageX < pageCenter ? Touch.LEFT : Touch.RIGHT);
     },
     handleTouchend: function(event) {
       event.preventDefault();
       if (event.touches.length > 0) {
         return;
       }
-      if (state.touch === 'left') {
+      if (state.touch === Touch.LEFT) {
         this.play(state.backward);
         m.redraw();
-      } else if (state.touch === 'right') {
+      } else if (state.touch === Touch.RIGHT) {
         this.play(state.forward);
       }
       state.clearTouch();
@@ -309,7 +314,7 @@
           state.togglePointer();
           break;
         case 't':
-          state.changeTheme();
+          state.nextTheme();
           break;
         case 'q':
           Fullscreen.exit();
