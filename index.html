@@ -169,7 +169,7 @@
     index: 0,
     pointer: true,
     theme: 2,
-    touch: '',
+    touch: null,
 
     setSlides: function(value) {
       if (Array.isArray(value)) {
@@ -184,6 +184,11 @@
     setTheme: function(value) {
       if (value >= 0 && value < THEMES.length) {
         state.theme = value;
+      }
+    },
+    setTouch: function(value) {
+      if (value === 'left' || value === 'right') {
+        state.touch = value;
       }
     },
 
@@ -207,6 +212,9 @@
     changeTheme: function() {
       var nextTheme = (state.theme + 1) % THEMES.length;
       state.setTheme(nextTheme);
+    },
+    clearTouch: function() {
+      state.touch = null;
     },
     currentSlide: function() {
       return state.slides.length > 0 ? state.slides[state.index] : {};
@@ -251,19 +259,19 @@
   var Presentation = {
     handleTouchstart: function(event) {
       var firstTouch = event.touches[0];
-      var center = document.body.clientWidth / 2;
-      state.touch = firstTouch.pageX < center ? 'left' : 'right';
+      var pageCenter = document.body.clientWidth / 2;
+      state.setTouch(firstTouch.pageX < pageCenter ? 'left' : 'right');
       event.preventDefault();
     },
     handleTouchend: function(event) {
       if (event.touches.length == 0) {
-        if (state.touch == 'left') {
+        if (state.touch === 'left') {
           this.play(state.backward);
           m.redraw();
-        } else if (state.touch == 'right') {
+        } else if (state.touch === 'right') {
           this.play(state.forward);
         }
-        state.touch = '';
+        state.clearTouch();
       }
       event.preventDefault();
     },
