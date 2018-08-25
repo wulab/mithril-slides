@@ -251,6 +251,7 @@
         style: {cursor: vnode.attrs.pointer ? 'default' : 'none'},
         onclick: vnode.attrs.onclick,
         ontouchstart: vnode.attrs.ontouchstart,
+        ontouchmove: vnode.attrs.ontouchmove,
         ontouchend: vnode.attrs.ontouchend
       }, [
         m('#objects', [
@@ -281,13 +282,17 @@
         touch.pageX < pageCenter ? Direction.LEFT : Direction.RIGHT
       );
     },
+    handleTouchmove: function(event) {
+      event.preventDefault();
+      state.clearTouch();
+    },
     handleTouchend: function(event) {
       event.preventDefault();
       if (event.touches.length > 0) {
         return;
       }
       var time = state.touchTime();
-      if (time > 1000) {
+      if (time > 500) {
         state.nextTheme();
       } else if (time > 250) {
       } else if (state.touch.direction === Direction.LEFT) {
@@ -363,6 +368,7 @@
         theme: state.theme,
         onclick: this.handleClick.bind(this),
         ontouchstart: this.handleTouchstart.bind(this),
+        ontouchmove: this.handleTouchmove.bind(this),
         ontouchend: this.handleTouchend.bind(this),
         oncontextmenu: this.handleContextmenu.bind(this),
         onkeydown: this.handleKeydown.bind(this)
