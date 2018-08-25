@@ -249,7 +249,9 @@
           !slide.codes    ? '' : m('pre'   , slide.codes.join('\n') ),
           !slide.embed    ? '' : m('iframe', slide.embed            ),
           !slide.bullets  ? '' : m('ul'    ,
-            slide.bullets.map( function(bullet) { return m('li', bullet) } )
+            slide.bullets.map(function(bullet) {
+              return m('li', bullet);
+            })
           )
         ])
       ]);
@@ -258,33 +260,35 @@
 
   var Presentation = {
     handleTouchstart: function(event) {
+      event.preventDefault();
       var firstTouch = event.touches[0];
       var pageCenter = document.body.clientWidth / 2;
       state.setTouch(firstTouch.pageX < pageCenter ? 'left' : 'right');
-      event.preventDefault();
     },
     handleTouchend: function(event) {
-      if (event.touches.length == 0) {
-        if (state.touch === 'left') {
-          this.play(state.backward);
-          m.redraw();
-        } else if (state.touch === 'right') {
-          this.play(state.forward);
-        }
-        state.clearTouch();
-      }
       event.preventDefault();
+      if (event.touches.length > 0) {
+        return;
+      }
+      if (state.touch === 'left') {
+        this.play(state.backward);
+        m.redraw();
+      } else if (state.touch === 'right') {
+        this.play(state.forward);
+      }
+      state.clearTouch();
     },
     handleClick: function(event) {
-      this.play(state.forward);
       event.preventDefault();
+      this.play(state.forward);
     },
     handleContextmenu: function(event) {
+      event.preventDefault();
       this.play(state.backward);
       m.redraw();
-      event.preventDefault();
     },
     handleKeydown: function(event) {
+      event.preventDefault();
       switch (event.key) {
         case 'Enter':
         case ' ':
@@ -314,7 +318,6 @@
           return;
       }
       m.redraw();
-      event.preventDefault();
     },
     oninit: function(vnode) {
       state.loadSlides().then(function() {
