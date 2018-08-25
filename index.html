@@ -132,6 +132,7 @@
   // setup
   var Direction = {LEFT: 0, RIGHT: 1};
   var Theme = {BLACK: 0, WHITE: 1, GRADIENT: 2, SHOWROOM: 3};
+  var Time = {TAP: 250, HOLD: 500};
 
   var Fullscreen = {
     isEnabled: function() {
@@ -292,9 +293,9 @@
         return;
       }
       var time = state.touchTime();
-      if (time > 500) {
+      if (time > Time.HOLD) {
         state.nextTheme();
-      } else if (time > 250) {
+      } else if (time > Time.TAP) {
       } else if (state.touch.direction === Direction.LEFT) {
         this.play(state.backward);
         m.redraw();
