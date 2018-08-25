@@ -210,8 +210,8 @@
         return Theme[key] === value;
       });
     },
-    loadSlides: function() {
-      return m.request({method: 'GET', url: 'slides.json'}).
+    loadSlides: function(url) {
+      return m.request({method: 'GET', url: url}).
         then(state.setSlides).
         then(state.loadImages).
         catch(function(error) { window.alert(error.message) });
@@ -325,7 +325,7 @@
       m.redraw();
     },
     oninit: function(vnode) {
-      state.loadSlides().then(function() {
+      state.loadSlides(vnode.attrs.url).then(function() {
         var firstSlide = state.slides[0];
         if (firstSlide) {
           document.title = firstSlide.title || firstSlide.subtitle || 'Untitled';
@@ -357,5 +357,9 @@
 
   // render
   document.body = document.createElement('body');
-  m.mount(document.body, Presentation);
+  m.mount(document.body, {
+    view: function() {
+      return m(Presentation, {url: '/slides.json'});
+    }
+  });
 </script>
