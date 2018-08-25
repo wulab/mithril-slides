@@ -6,7 +6,7 @@
 
   {
     "image": {
-      "src": "assets/770x578.png",
+      "src": "/assets/770x578.png",
       "width": "770",
       "height": "578"
     },
@@ -38,7 +38,7 @@
 
   {
     "image": {
-      "src": "assets/1024x768.png",
+      "src": "/assets/1024x768.png",
       "width": "1024",
       "height": "768"
     }
@@ -46,7 +46,7 @@
 
   {
     "embed": {
-      "src": "assets/lorem_ipsum.html",
+      "src": "/assets/lorem_ipsum.html",
       "width": "1024",
       "height": "768"
     }
@@ -54,7 +54,7 @@
 
   {
     "image": {
-      "src": "assets/lorem_ipsum.gif",
+      "src": "/assets/lorem_ipsum.gif",
       "width": "800",
       "height": "600"
     }
