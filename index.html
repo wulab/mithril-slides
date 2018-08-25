@@ -32,13 +32,14 @@
     overflow: hidden;
     text-overflow: ellipsis;
   }
-  iframe, img { max-width: 100%; max-height: 84vh }
-  iframe {
+  iframe, img {
     border: 1px solid #aaa;
     background-image: url("data:image/svg+xml;base64,PCEtLSBCeSBTYW0gSGVyYmVydCAoQHNoZXJiKSwgZm9yIGV2ZXJ5b25lLiBNb3JlIEAgaHR0cDovL2dvby5nbC83QUp6YkwgLS0+Cjxzdmcgd2lkdGg9IjM4IiBoZWlnaHQ9IjM4IiB2aWV3Qm94PSIwIDAgMzggMzgiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgc3Ryb2tlPSIjYWFhIj4KICAgIDxnIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+CiAgICAgICAgPGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMSAxKSIgc3Ryb2tlLXdpZHRoPSIyIj4KICAgICAgICAgICAgPGNpcmNsZSBzdHJva2Utb3BhY2l0eT0iLjUiIGN4PSIxOCIgY3k9IjE4IiByPSIxOCIvPgogICAgICAgICAgICA8cGF0aCBkPSJNMzYgMThjMC05Ljk0LTguMDYtMTgtMTgtMTgiPgogICAgICAgICAgICAgICAgPGFuaW1hdGVUcmFuc2Zvcm0KICAgICAgICAgICAgICAgICAgICBhdHRyaWJ1dGVOYW1lPSJ0cmFuc2Zvcm0iCiAgICAgICAgICAgICAgICAgICAgdHlwZT0icm90YXRlIgogICAgICAgICAgICAgICAgICAgIGZyb209IjAgMTggMTgiCiAgICAgICAgICAgICAgICAgICAgdG89IjM2MCAxOCAxOCIKICAgICAgICAgICAgICAgICAgICBkdXI9IjFzIgogICAgICAgICAgICAgICAgICAgIHJlcGVhdENvdW50PSJpbmRlZmluaXRlIi8+CiAgICAgICAgICAgIDwvcGF0aD4KICAgICAgICA8L2c+CiAgICA8L2c+Cjwvc3ZnPg==");
     background-position: center;
     background-repeat: no-repeat;
-    background-size: 8%;
+    background-size: 96px;
+    max-height: 84vh;
+    max-width: 100%;
   }
 
   /* layout */
@@ -120,7 +121,7 @@
       background-image: url("data:image/svg+xml;base64,PHN2ZyBmaWxsPSIjQUFBQUFBIiBoZWlnaHQ9IjQ4IiB2aWV3Qm94PSIwIDAgMjQgMjQiIHdpZHRoPSI0OCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICAgIDxwYXRoIGQ9Ik0wIDBoMjR2MjRIMHoiIGZpbGw9Im5vbmUiLz4KICAgIDxwYXRoIGQ9Ik0xNi40OCAyLjUyYzMuMjcgMS41NSA1LjYxIDQuNzIgNS45NyA4LjQ4aDEuNUMyMy40NCA0Ljg0IDE4LjI5IDAgMTIgMGwtLjY2LjAzIDMuODEgMy44MSAxLjMzLTEuMzJ6bS02LjI1LS43N2MtLjU5LS41OS0xLjU0LS41OS0yLjEyIDBMMS43NSA4LjExYy0uNTkuNTktLjU5IDEuNTQgMCAyLjEybDEyLjAyIDEyLjAyYy41OS41OSAxLjU0LjU5IDIuMTIgMGw2LjM2LTYuMzZjLjU5LS41OS41OS0xLjU0IDAtMi4xMkwxMC4yMyAxLjc1em00LjYgMTkuNDRMMi44MSA5LjE3bDYuMzYtNi4zNiAxMi4wMiAxMi4wMi02LjM2IDYuMzZ6bS03LjMxLjI5QzQuMjUgMTkuOTQgMS45MSAxNi43NiAxLjU1IDEzSC4wNUMuNTYgMTkuMTYgNS43MSAyNCAxMiAyNGwuNjYtLjAzLTMuODEtMy44MS0xLjMzIDEuMzJ6Ii8+Cjwvc3ZnPg==");
       background-position: center;
       background-repeat: no-repeat;
-      background-size: 128px;
+      background-size: 96px;
       pointer-events: none;
     }
     #objects { display: none }
@@ -129,7 +130,8 @@
 <script src="mithril.js"></script>
 <script>
   // setup
-  var THEMES = ['black', 'white', 'gradient', 'showroom'];
+  var Touch = {LEFT: 0, RIGHT: 1};
+  var Theme = {BLACK: 0, WHITE: 1, GRADIENT: 2, SHOWROOM: 3};
 
   var Fullscreen = {
     isEnabled: function() {
@@ -164,53 +166,69 @@
 
   // model
   var state = {
-    data: [],
-    error: '',
+    slides: [],
     index: 0,
     pointer: true,
-    theme: 2,
+    theme: Theme.GRADIENT,
+    touch: null,
 
-    setData: function(value) {
-      if (Array.isArray(value)) {
-        state.data = value;
-      }
-    },
-    setError: function(value) {
-      if (typeof(value) === 'string') {
-        state.error = value;
-      }
-    },
     setIndex: function(value) {
-      if (value >= 0 && value < state.data.length) {
+      if (value >= 0 && value < state.slides.length) {
         state.index = value;
       }
     },
+    setSlides: function(value) {
+      if (Array.isArray(value)) {
+        state.slides = value;
+      }
+    },
     setTheme: function(value) {
-      if (value >= 0 && value < THEMES.length) {
+      if (value in Object.values(Theme)) {
         state.theme = value;
       }
     },
+    setTouch: function(value) {
+      if (value in Object.values(Touch)) {
+        state.touch = value;
+      }
+    },
 
-    load: function() {
-      m.request({method: 'GET', url: 'slides.json'}).
-        then(function(data) { state.setData(data) }).
-        catch(function(error) { state.setError(error.message) });
+    backward: function() {
+      state.setIndex(state.index - 1);
     },
-    togglePointer: function() {
-      state.pointer = !state.pointer;
-    },
-    switchTheme: function() {
-      var nextTheme = (state.theme + 1) % THEMES.length;
-      state.setTheme(nextTheme);
+    clearTouch: function() {
+      state.touch = null;
     },
     currentSlide: function() {
-      return state.data.length > 0 ? state.data[state.index] : {};
+      return state.slides.length > 0 ? state.slides[state.index] : {};
     },
     forward: function() {
       state.setIndex(state.index + 1);
     },
-    backward: function() {
-      state.setIndex(state.index - 1);
+    getThemeName: function(value) {
+      return Object.keys(Theme).find(function(key) {
+        return Theme[key] === value;
+      });
+    },
+    loadSlides: function(url) {
+      return m.request({method: 'GET', url: url}).
+        then(state.setSlides).
+        then(state.loadImages).
+        catch(function(error) { window.alert(error.message) });
+    },
+    loadImages: function() {
+      state.slides.forEach(function(slide) {
+        if (slide.image) {
+          var image = new Image();
+          image.src = slide.image.src;
+        }
+      });
+    },
+    nextTheme: function() {
+      state.setTheme((state.theme + 1) % Object.keys(Theme).length);
+    },
+    togglePointer: function() {
+      state.pointer = !state.pointer;
     },
   };
 
@@ -221,21 +239,24 @@
       document.onkeydown = vnode.attrs.onkeydown;
     },
     view: function(vnode) {
-      var data = vnode.attrs.data;
+      var slide = vnode.attrs.slide;
       return m('#slide', {
-        class: THEMES[vnode.attrs.theme],
+        class: state.getThemeName(vnode.attrs.theme).toLowerCase(),
         style: {cursor: vnode.attrs.pointer ? 'default' : 'none'},
         onclick: vnode.attrs.onclick,
+        ontouchstart: vnode.attrs.ontouchstart,
         ontouchend: vnode.attrs.ontouchend
       }, [
         m('#objects', [
-          !data.image    ? '' : m('img'   , data.image            ),
-          !data.title    ? '' : m('h1'    , m.trust(data.title)   ),
-          !data.subtitle ? '' : m('h2'    , m.trust(data.subtitle)),
-          !data.codes    ? '' : m('pre'   , data.codes.join('\n') ),
-          !data.embed    ? '' : m('iframe', data.embed            ),
-          !data.bullets  ? '' : m('ul'    ,
-            data.bullets.map( function(bullet) { return m('li', bullet) } )
+          !slide.image    ? '' : m('img'   , slide.image            ),
+          !slide.title    ? '' : m('h1'    , m.trust(slide.title)   ),
+          !slide.subtitle ? '' : m('h2'    , m.trust(slide.subtitle)),
+          !slide.codes    ? '' : m('pre'   , slide.codes.join('\n') ),
+          !slide.embed    ? '' : m('iframe', slide.embed            ),
+          !slide.bullets  ? '' : m('ul'    ,
+            slide.bullets.map(function(bullet) {
+              return m('li', bullet);
+            })
           )
         ])
       ]);
@@ -243,33 +264,57 @@
   };
 
   var Presentation = {
-    handleClick: function(event) {
-      this.play(state.forward);
+    handleTouchstart: function(event) {
       event.preventDefault();
+      var firstTouch = event.touches[0];
+      var pageCenter = document.body.clientWidth / 2;
+      state.setTouch(firstTouch.pageX < pageCenter ? Touch.LEFT : Touch.RIGHT);
+    },
+    handleTouchend: function(event) {
+      event.preventDefault();
+      if (event.touches.length > 0) {
+        return;
+      }
+      if (state.touch === Touch.LEFT) {
+        this.play(state.backward);
+        m.redraw();
+      } else if (state.touch === Touch.RIGHT) {
+        this.play(state.forward);
+      }
+      state.clearTouch();
+    },
+    handleClick: function(event) {
+      event.preventDefault();
+      this.play(state.forward);
     },
     handleContextmenu: function(event) {
+      event.preventDefault();
       this.play(state.backward);
       m.redraw();
-      event.preventDefault();
     },
     handleKeydown: function(event) {
+      event.preventDefault();
       switch (event.key) {
         case 'Enter':
         case ' ':
         case 'ArrowRight':
         case 'ArrowDown':
+        case 'Right':
+        case 'Down':
           this.play(state.forward);
           break;
         case 'Backspace':
         case 'ArrowLeft':
         case 'ArrowUp':
+        case 'Left':
+        case 'Up':
           this.play(state.backward);
           break;
         case 'c':
           state.togglePointer();
           break;
         case 't':
-          state.switchTheme();
+          state.nextTheme();
           break;
         case 'q':
           Fullscreen.exit();
@@ -278,9 +323,15 @@
           return;
       }
       m.redraw();
-      event.preventDefault();
     },
-    oninit: state.load,
+    oninit: function(vnode) {
+      state.loadSlides(vnode.attrs.url).then(function() {
+        var firstSlide = state.slides[0];
+        if (firstSlide) {
+          document.title = firstSlide.title || firstSlide.subtitle || 'Untitled';
+        }
+      });
+    },
     oncreate: function(vnode) {
       vnode.state.play = function(action) {
         if (Fullscreen.isEnabled() && !Fullscreen.hasElement()) {
@@ -292,11 +343,12 @@
     },
     view: function(vnode) {
       return m(Slide, {
-        data: state.currentSlide(),
+        slide: state.currentSlide(),
         pointer: state.pointer,
         theme: state.theme,
         onclick: this.handleClick.bind(this),
-        ontouchend: this.handleClick.bind(this),
+        ontouchstart: this.handleTouchstart.bind(this),
+        ontouchend: this.handleTouchend.bind(this),
         oncontextmenu: this.handleContextmenu.bind(this),
         onkeydown: this.handleKeydown.bind(this)
       });
@@ -305,5 +357,9 @@
 
   // render
   document.body = document.createElement('body');
-  m.mount(document.body, Presentation);
+  m.mount(document.body, {
+    view: function() {
+      return m(Presentation, {url: '/slides.json'});
+    }
+  });
 </script>
