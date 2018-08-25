@@ -130,7 +130,7 @@
 <script src="//unpkg.com/mithril@^1.1.6/mithril.js"></script>
 <script>
   // setup
-  var Touch = {LEFT: 0, RIGHT: 1};
+  var Direction = {LEFT: 0, RIGHT: 1};
   var Theme = {BLACK: 0, WHITE: 1, GRADIENT: 2, SHOWROOM: 3};
 
   var Fullscreen = {
@@ -170,7 +170,7 @@
     index: 0,
     pointer: true,
     theme: Theme.GRADIENT,
-    touch: null,
+    touch: {direction: null, time: null},
 
     setIndex: function(value) {
       if (value >= 0 && value < state.slides.length) {
@@ -188,8 +188,9 @@
       }
     },
     setTouch: function(value) {
-      if (value in Object.values(Touch)) {
-        state.touch = value;
+      if (value in Object.values(Direction)) {
+        state.touch.direction = value;
+        state.touch.time = Date.now();
       }
     },
 
@@ -197,7 +198,8 @@
       state.setIndex(state.index - 1);
     },
     clearTouch: function() {
-      state.touch = null;
+      state.touch.direction = null;
+      state.touch.time = null;
     },
     currentSlide: function() {
       return state.slides.length > 0 ? state.slides[state.index] : {};
@@ -226,6 +228,10 @@
     },
     nextTheme: function() {
       state.setTheme((state.theme + 1) % Object.keys(Theme).length);
+    },
+    touchTime: function() {
+      var startTime = state.touch.time;
+      return startTime ? Date.now() - startTime : 0;
     },
     togglePointer: function() {
       state.pointer = !state.pointer;
@@ -266,19 +272,28 @@
   var Presentation = {
     handleTouchstart: function(event) {
       event.preventDefault();
-      var firstTouch = event.touches[0];
+      if (event.touches.length > 1) {
+        return;
+      }
+      var touch = event.touches[0];
       var pageCenter = document.body.clientWidth / 2;
-      state.setTouch(firstTouch.pageX < pageCenter ? Touch.LEFT : Touch.RIGHT);
+      state.setTouch(
+        touch.pageX < pageCenter ? Direction.LEFT : Direction.RIGHT
+      );
     },
     handleTouchend: function(event) {
       event.preventDefault();
       if (event.touches.length > 0) {
         return;
       }
-      if (state.touch === Touch.LEFT) {
+      var time = state.touchTime();
+      if (time > 1000) {
+        state.nextTheme();
+      } else if (time > 250) {
+      } else if (state.touch.direction === Direction.LEFT) {
         this.play(state.backward);
         m.redraw();
-      } else if (state.touch === Touch.RIGHT) {
+      } else if (state.touch.direction === Direction.RIGHT) {
         this.play(state.forward);
       }
       state.clearTouch();
