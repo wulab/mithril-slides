@@ -1,6 +1,6 @@
 <!doctype html>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1, maximum-scale=1">
 <title>mithril-slides</title>
 <style>
   /* base */
@@ -130,8 +130,9 @@
 <script src="//unpkg.com/mithril@^1.1.6/mithril.js"></script>
 <script>
   // setup
-  var Touch = {LEFT: 0, RIGHT: 1};
   var Theme = {BLACK: 0, WHITE: 1, GRADIENT: 2, SHOWROOM: 3};
+  var TouchDirection = {LEFT: 0, CENTER: 1, RIGHT: 2};
+  var TouchType = {TAP: 0, PRESS: 1, HOLD: 2};
 
   var Fullscreen = {
     isEnabled: function() {
@@ -170,7 +171,7 @@
     index: 0,
     pointer: true,
     theme: Theme.GRADIENT,
-    touch: null,
+    touch: {direction: null, start: null},
 
     setIndex: function(value) {
       if (value >= 0 && value < state.slides.length) {
@@ -188,8 +189,9 @@
       }
     },
     setTouch: function(value) {
-      if (value in Object.values(Touch)) {
-        state.touch = value;
+      if (value in Object.values(TouchDirection)) {
+        state.touch.direction = value;
+        state.touch.start = Date.now();
       }
     },
 
@@ -197,7 +199,8 @@
       state.setIndex(state.index - 1);
     },
     clearTouch: function() {
-      state.touch = null;
+      state.touch.direction = null;
+      state.touch.start = null;
     },
     currentSlide: function() {
       return state.slides.length > 0 ? state.slides[state.index] : {};
@@ -209,6 +212,31 @@
       return Object.keys(Theme).find(function(key) {
         return Theme[key] === value;
       });
+    },
+    getTouchDirection: function(x, width) {
+      if (!x || !width) {
+        return null;
+      }
+      if (x > width * 2 / 3) {
+        return TouchDirection.RIGHT;
+      } else if (x > width / 3) {
+        return TouchDirection.CENTER;
+      } else {
+        return TouchDirection.LEFT;
+      }
+    },
+    getTouchType: function() {
+      if (!state.touch.start) {
+        return null;
+      }
+      var elapsedTime = Date.now() - state.touch.start;
+      if (elapsedTime > 500) {
+        return TouchType.HOLD;
+      } else if (elapsedTime > 250) {
+        return TouchType.PRESS;
+      } else {
+        return TouchType.TAP;
+      }
     },
     loadSlides: function(url) {
       return m.request({method: 'GET', url: url}).
@@ -245,6 +273,7 @@
         style: {cursor: vnode.attrs.pointer ? 'default' : 'none'},
         onclick: vnode.attrs.onclick,
         ontouchstart: vnode.attrs.ontouchstart,
+        ontouchmove: vnode.attrs.ontouchmove,
         ontouchend: vnode.attrs.ontouchend
       }, [
         m('#objects', [
@@ -266,19 +295,30 @@
   var Presentation = {
     handleTouchstart: function(event) {
       event.preventDefault();
-      var firstTouch = event.touches[0];
-      var pageCenter = document.body.clientWidth / 2;
-      state.setTouch(firstTouch.pageX < pageCenter ? Touch.LEFT : Touch.RIGHT);
+      if (event.touches.length > 1) {
+        return;
+      }
+      var touch = event.touches[0];
+      var direction = state.getTouchDirection(touch.pageX, document.body.clientWidth);
+      state.setTouch(direction);
+    },
+    handleTouchmove: function(event) {
+      event.preventDefault();
+      state.clearTouch();
     },
     handleTouchend: function(event) {
       event.preventDefault();
       if (event.touches.length > 0) {
         return;
       }
-      if (state.touch === Touch.LEFT) {
+      var type = state.getTouchType();
+      var direction = state.touch.direction;
+      if (type === TouchType.HOLD) {
+        state.nextTheme();
+      } else if (type === TouchType.TAP && direction === TouchDirection.LEFT) {
         this.play(state.backward);
         m.redraw();
-      } else if (state.touch === Touch.RIGHT) {
+      } else if (type === TouchType.TAP && direction === TouchDirection.RIGHT) {
         this.play(state.forward);
       }
       state.clearTouch();
@@ -348,6 +388,7 @@
         theme: state.theme,
         onclick: this.handleClick.bind(this),
         ontouchstart: this.handleTouchstart.bind(this),
+        ontouchmove: this.handleTouchmove.bind(this),
         ontouchend: this.handleTouchend.bind(this),
         oncontextmenu: this.handleContextmenu.bind(this),
         onkeydown: this.handleKeydown.bind(this)
