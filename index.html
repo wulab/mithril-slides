@@ -213,6 +213,31 @@
         return Theme[key] === value;
       });
     },
+    getTouchDirection: function(x, width) {
+      if (!x || !width) {
+        return null;
+      }
+      if (x > width * 2 / 3) {
+        return TouchDirection.RIGHT;
+      } else if (x > width / 3) {
+        return TouchDirection.CENTER;
+      } else {
+        return TouchDirection.LEFT;
+      }
+    },
+    getTouchType: function() {
+      if (!state.touch.start) {
+        return null;
+      }
+      var elapsedTime = Date.now() - state.touch.start;
+      if (elapsedTime > 500) {
+        return TouchType.HOLD;
+      } else if (elapsedTime > 250) {
+        return TouchType.PRESS;
+      } else {
+        return TouchType.TAP;
+      }
+    },
     loadSlides: function(url) {
       return m.request({method: 'GET', url: url}).
         then(state.setSlides).
@@ -229,19 +254,6 @@
     },
     nextTheme: function() {
       state.setTheme((state.theme + 1) % Object.keys(Theme).length);
-    },
-    touchType: function() {
-      if (!state.touch.start) {
-        return null;
-      }
-      var elapsedTime = Date.now() - state.touch.start;
-      if (elapsedTime > 500) {
-        return TouchType.HOLD;
-      } else if (elapsedTime > 250) {
-        return TouchType.PRESS;
-      } else {
-        return TouchType.TAP;
-      }
     },
     togglePointer: function() {
       state.pointer = !state.pointer;
@@ -287,10 +299,8 @@
         return;
       }
       var touch = event.touches[0];
-      var pageCenter = document.body.clientWidth / 2;
-      state.setTouch(
-        touch.pageX < pageCenter ? TouchDirection.LEFT : TouchDirection.RIGHT
-      );
+      var direction = state.getTouchDirection(touch.pageX, document.body.clientWidth);
+      state.setTouch(direction);
     },
     handleTouchmove: function(event) {
       event.preventDefault();
@@ -301,7 +311,7 @@
       if (event.touches.length > 0) {
         return;
       }
-      var type = state.touchType();
+      var type = state.getTouchType();
       var direction = state.touch.direction;
       if (type === TouchType.HOLD) {
         state.nextTheme();
