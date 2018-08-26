@@ -130,9 +130,9 @@
 <script src="//unpkg.com/mithril@^1.1.6/mithril.js"></script>
 <script>
   // setup
-  var Direction = {LEFT: 0, RIGHT: 1};
   var Theme = {BLACK: 0, WHITE: 1, GRADIENT: 2, SHOWROOM: 3};
-  var Time = {TAP: 250, HOLD: 500};
+  var TouchDirection = {LEFT: 0, CENTER: 1, RIGHT: 2};
+  var TouchType = {TAP: 0, PRESS: 1, HOLD: 2};
 
   var Fullscreen = {
     isEnabled: function() {
@@ -171,7 +171,7 @@
     index: 0,
     pointer: true,
     theme: Theme.GRADIENT,
-    touch: {direction: null, time: null},
+    touch: {direction: null, start: null},
 
     setIndex: function(value) {
       if (value >= 0 && value < state.slides.length) {
@@ -189,9 +189,9 @@
       }
     },
     setTouch: function(value) {
-      if (value in Object.values(Direction)) {
+      if (value in Object.values(TouchDirection)) {
         state.touch.direction = value;
-        state.touch.time = Date.now();
+        state.touch.start = Date.now();
       }
     },
 
@@ -200,7 +200,7 @@
     },
     clearTouch: function() {
       state.touch.direction = null;
-      state.touch.time = null;
+      state.touch.start = null;
     },
     currentSlide: function() {
       return state.slides.length > 0 ? state.slides[state.index] : {};
@@ -230,9 +230,18 @@
     nextTheme: function() {
       state.setTheme((state.theme + 1) % Object.keys(Theme).length);
     },
-    touchTime: function() {
-      var startTime = state.touch.time;
-      return startTime ? Date.now() - startTime : 0;
+    touchType: function() {
+      if (!state.touch.start) {
+        return null;
+      }
+      var elapsedTime = Date.now() - state.touch.start;
+      if (elapsedTime > 500) {
+        return TouchType.HOLD;
+      } else if (elapsedTime > 250) {
+        return TouchType.PRESS;
+      } else {
+        return TouchType.TAP;
+      }
     },
     togglePointer: function() {
       state.pointer = !state.pointer;
@@ -280,7 +289,7 @@
       var touch = event.touches[0];
       var pageCenter = document.body.clientWidth / 2;
       state.setTouch(
-        touch.pageX < pageCenter ? Direction.LEFT : Direction.RIGHT
+        touch.pageX < pageCenter ? TouchDirection.LEFT : TouchDirection.RIGHT
       );
     },
     handleTouchmove: function(event) {
@@ -292,14 +301,14 @@
       if (event.touches.length > 0) {
         return;
       }
-      var time = state.touchTime();
-      if (time > Time.HOLD) {
+      var type = state.touchType();
+      var direction = state.touch.direction;
+      if (type === TouchType.HOLD) {
         state.nextTheme();
-      } else if (time > Time.TAP) {
-      } else if (state.touch.direction === Direction.LEFT) {
+      } else if (type === TouchType.TAP && direction === TouchDirection.LEFT) {
         this.play(state.backward);
         m.redraw();
-      } else if (state.touch.direction === Direction.RIGHT) {
+      } else if (type === TouchType.TAP && direction === TouchDirection.RIGHT) {
         this.play(state.forward);
       }
       state.clearTouch();
